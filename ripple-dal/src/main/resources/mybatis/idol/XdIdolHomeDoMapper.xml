@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xdong.ripple.dal.mapper.idol.XdIdolHomeDoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xdong.ripple.dal.entity.idol.XdIdolHomeDo">
+        <id column="id" property="id" />
+        <result column="c_time" property="cTime" />
+        <result column="c_user" property="cUser" />
+        <result column="m_time" property="mTime" />
+        <result column="m_user" property="mUser" />
+        <result column="idol_id" property="idolId" />
+        <result column="home_id" property="homeId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, idol_id AS idolId, home_id AS homeId
+    </sql>
+
+</mapper>

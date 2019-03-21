@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xdong.ripple.dal.mapper.crawler.RpCrawlerUrlDoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo">
+        <id column="id" property="id" />
+        <result column="c_time" property="cTime" />
+        <result column="c_user" property="cUser" />
+        <result column="m_time" property="mTime" />
+        <result column="m_user" property="mUser" />
+        <result column="name" property="name" />
+        <result column="module_name" property="moduleName" />
+        <result column="domain_name" property="domainName" />
+        <result column="crawler_url" property="crawlerUrl" />
+        <result column="type" property="type" />
+        <result column="crawler_class" property="crawlerClass" />
+        <result column="isValid" property="isValid" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, name, module_name AS moduleName, domain_name AS domainName, crawler_url AS crawlerUrl, type, crawler_class AS crawlerClass, isValid
+    </sql>
+
+</mapper>

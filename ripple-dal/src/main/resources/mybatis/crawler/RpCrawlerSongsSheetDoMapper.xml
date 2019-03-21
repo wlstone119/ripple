@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xdong.ripple.dal.mapper.crawler.RpCrawlerSongsSheetDoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsSheetDo">
+        <id column="id" property="id" />
+        <result column="c_time" property="cTime" />
+        <result column="c_user" property="cUser" />
+        <result column="m_time" property="mTime" />
+        <result column="m_user" property="mUser" />
+        <result column="name" property="name" />
+        <result column="author" property="author" />
+        <result column="cover_img" property="coverImg" />
+        <result column="introduction" property="introduction" />
+        <result column="play_count" property="playCount" />
+        <result column="collect_count" property="collectCount" />
+        <result column="share_count" property="shareCount" />
+        <result column="comment_count" property="commentCount" />
+        <result column="sort" property="sort" />
+        <result column="resourcepath" property="resourcepath" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, name, author, cover_img AS coverImg, introduction, play_count AS playCount, collect_count AS collectCount, share_count AS shareCount, comment_count AS commentCount, sort, resourcepath
+    </sql>
+
+</mapper>

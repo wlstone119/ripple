@@ -1,0 +1,158 @@
+#set($layout="/layout/idol.vm") 
+
+##首页banner
+#if($banner)
+	<div class="banner">
+		<div class="slideshow white-bg">
+			<div class="slider-banner-container">
+				<div class="slider-banner-fullscreen">
+					<ul>
+						#foreach($homeText in $banner)
+							<li data-transition="fade" data-slotamount="7" data-masterspeed="1000" data-saveperformance="on" data-title="Slide 1">
+								<img src="$!homeText.content" alt="slidebg1" data-bgposition="center top" data-bgfit="cover" data-bgrepeat="no-repeat">
+							</li>
+						#end
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+#end
+
+##疯狂安利链接
+#if($siteUrl)
+	<section class="main-container">
+		<div class="container">
+			<div class="row">
+				<div class="main col-md-12">
+					<h2 class="page-title">疯狂安利</h2>
+					<hr>
+					<div class="row">
+						#foreach($homeText in $siteUrl)
+							<div class="col-md-3 col-sm-4">
+							<h2>$!homeText.siteType</h2>
+							<ul class="list">
+								#foreach($site in $homeText.viewList)
+									<li><a href="$!site.content"><i class="icon-right-open"></i><span style="color:blue">$!site.title</span></a></li>
+								#end
+							</ul>
+						</div>
+						#end
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+#end
+
+##视频列表
+#foreach($videoText in $video)
+<section class="main-container object-non-visible" data-animation-effect="fadeInUpSmall" data-effect-delay="300">
+	<div class="clearfix">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<br>
+					<h1 class="text-center space-top" id="about">最新咨询</h1>
+					<div class="separator"></div>
+					<p class="lead text-center">$!videoText.title</p>
+					<br>
+					<div class="row">
+						<div class="col-md-4">
+							<p>$!videoText.description</p>
+							<p>$!videoText.description</p>
+							<ul class="list-icons">
+								<li class="object-non-visible" data-animation-effect="fadeInUpSmall" data-effect-delay="500"><i class="icon-check"></i> $!videoText.description</li>
+							</ul>
+						</div>
+
+						<!-- sidebar start -->
+						<aside class="sidebar col-md-8">
+							<div class="side vertical-divider-left">
+								<div class="block clearfix">
+									<!--<h3 class="title margin-top-clear">舞蹈视频</h3>-->
+									<div class="embed-responsive embed-responsive-4by3">
+										$!videoText.content
+										<p><a href="http://vimeo.com/29198414">Introducing Vimeo Music Store</a> from <a href="http://vimeo.com/staff">Vimeo Staff</a> on <a href="https://vimeo.com">Vimeo</a>.</p>  
+									</div>
+								</div>
+							</div>
+						</aside>
+					</div>
+					<br>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+#end
+
+##version2 疯狂安利
+#if($version2siteUrl)
+	<div class="container">
+		<div class="space"></div>
+		<h2>精彩集锦</h2>
+	</div>
+	<div class="container">
+		#foreach($siteUrl in $version2siteUrl)
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row grid-space-10">
+						#foreach($siteUrlView in $siteUrl.viewList)
+							<div class="col-sm-4">
+							<div class="box-style-2 object-non-visible" data-animation-effect="fadeInUpSmall" data-effect-delay="0">
+								<div class="icon-container dark-bg">
+									<i class="fa fa-leaf"></i>
+								</div>
+								<div class="body">
+									<h2>$!siteUrlView.title</h2>
+									<p>$!siteUrlView.description</p>
+									<a href="$!siteUrlView.content" class="link"><span>查看更多</span></a>
+								</div>
+							</div>
+						</div>
+						#end
+					</div>
+				</div>
+			</div>
+		#end
+	</div>
+#end
+
+##博文列表
+#if($version2articles)
+	<section class="main-container">
+		<div class="container">
+			<div class="row">
+				<div class="main col-md-12">
+					<h2 id="image-boxes" class="page-title">精美博文</h2>
+					<div class="space-bottom"></div>
+						#foreach($articles in $version2articles)
+							<div class="row">
+								#foreach($article in $articles.viewList)
+									<div class="col-md-4">
+										<div class="image-box mb-20 object-non-visible" data-animation-effect="fadeInLeft" data-effect-delay="300">
+											<div class="overlay-container">
+												<img src="$!article.picUrl" alt="">
+												<div class="overlay">
+													<div class="overlay-links">
+														<a href="$!article.outHref"><i class="fa fa-link"></i></a>
+														<a href="$!article.outHref" class="popup-img"><i class="fa fa-search-plus"></i></a>
+													</div>
+												</div>
+											</div>
+											<div class="image-box-body">
+												<h3 class="title"><a href="portfolio-item.html" target="view_window">$!article.title</a></h3>
+												<p>$!article.description</p>
+												<a href="$!article.outHref" class="link"><span>阅读</span></a>
+											</div>
+										</div>
+									</div>
+								#end
+							</div>
+						#end
+				</div>
+			</div>
+		</div>
+	</section>
+#end

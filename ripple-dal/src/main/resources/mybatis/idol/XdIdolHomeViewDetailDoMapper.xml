@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xdong.ripple.dal.mapper.idol.XdIdolHomeViewDetailDoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDetailDo">
+        <id column="id" property="id" />
+        <result column="c_time" property="cTime" />
+        <result column="c_user" property="cUser" />
+        <result column="m_time" property="mTime" />
+        <result column="m_user" property="mUser" />
+        <result column="pre_view_id" property="preViewId" />
+        <result column="idol_home_type" property="idolHomeType" />
+        <result column="title" property="title" />
+        <result column="description" property="description" />
+        <result column="content" property="content" />
+        <result column="sort" property="sort" />
+        <result column="out_href" property="outHref" />
+        <result column="pic_url" property="picUrl" />
+        <result column="site_type" property="siteType" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, pre_view_id AS preViewId, idol_home_type AS idolHomeType, title, description, content, sort, out_href AS outHref, pic_url AS picUrl, site_type AS siteType
+    </sql>
+
+</mapper>

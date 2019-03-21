@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xdong.ripple.dal.mapper.crawler.RpCrawlerSongsDoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo">
+        <id column="id" property="id" />
+        <result column="c_time" property="cTime" />
+        <result column="c_user" property="cUser" />
+        <result column="m_time" property="mTime" />
+        <result column="m_user" property="mUser" />
+        <result column="name" property="name" />
+        <result column="song_author" property="songAuthor" />
+        <result column="song_album" property="songAlbum" />
+        <result column="type" property="type" />
+        <result column="status" property="status" />
+        <result column="song_album_pic" property="songAlbumPic" />
+        <result column="song_duration" property="songDuration" />
+        <result column="song_url" property="songUrl" />
+        <result column="resourcepath" property="resourcepath" />
+        <result column="song_sheet" property="songSheet" />
+        <result column="sort" property="sort" />
+        <result column="resource" property="resource" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, name, song_author AS songAuthor, song_album AS songAlbum, type, status, song_album_pic AS songAlbumPic, song_duration AS songDuration, song_url AS songUrl, resourcepath, song_sheet AS songSheet, sort, resource
+    </sql>
+
+</mapper>

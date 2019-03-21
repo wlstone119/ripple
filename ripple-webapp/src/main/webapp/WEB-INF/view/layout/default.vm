@@ -1,0 +1,13 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
+#parse("/layout/common/header.vm")
+<body>
+	#parse("/layout/common/menu.vm")
+	<div class="scrollToTop"><i class="icon-up-open-big"></i></div>
+	<div class="page-wrapper">
+		$screen_content
+	</div>
+</body>
+#parse("/layout/common/foot.vm")
+</html>
