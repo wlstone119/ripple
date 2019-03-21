@@ -20,7 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.xdong.ripple.common.vo.XdIdolHomeViewDetailVo;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDetailDo;
+import com.xdong.ripple.dal.entity.system.RpSysDictDo;
 import com.xdong.ripple.spi.idol.IXdIdolHomeViewDetailService;
+import com.xdong.ripple.spi.system.IRpSysDictService;
 
 @Controller
 @RequestMapping("/idol")
@@ -34,6 +36,9 @@ public class IdolController extends BaseController {
 
     @Autowired
     private IXdIdolHomeViewDetailService xdIdolHomeViewDetailServiceImpl;
+
+    @Autowired
+    private IRpSysDictService            rpSysDictServiceImpl;
 
     @RequestMapping(value = "/home", method = { RequestMethod.GET, RequestMethod.POST })
     @ResponseBody
@@ -143,12 +148,12 @@ public class IdolController extends BaseController {
         Set<String> types = new HashSet<String>();
         types.add("siteUrl");
         types.add("articles");
-        // List<SysDictDo> dictList = sysDictServiceImpl.listByType(needVersion2Type);
-        // if (CollectionUtils.isNotEmpty(dictList)) {
-        // for (SysDictDo dictDo : dictList) {
-        // types.add(dictDo.getValue());
-        // }
-        // }
+        List<RpSysDictDo> dictList = rpSysDictServiceImpl.listByType(needVersion2Type);
+        if (CollectionUtils.isNotEmpty(dictList)) {
+            for (RpSysDictDo dictDo : dictList) {
+                types.add(dictDo.getValue());
+            }
+        }
         return types;
     }
 

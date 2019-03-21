@@ -16,14 +16,15 @@ public class MainGenerator {
         // 作者
         String author = "wanglei";
         // 文件目录
-        final String dir = "idol";
+        final String dir = "system";
         // 本地项目路径
-        String project_url = "/usr/local/workspace/xdong/ripple";
+        String project_url = "/Users/stone/git/ripple-master";
         // 前缀
         String tablePrefix = "";
         // 表名
         //String[] table_names = new String[] { "rp_crawler_url", "rp_crawler_songs", "rp_crawler_songs_sheet" };
-        String[] table_names = new String[] { "xd_idol", "xd_idol_home", "xd_idol_home_view","xd_idol_home_view_detail" };
+        //String[] table_names = new String[] { "xd_idol", "xd_idol_home", "xd_idol_home_view","xd_idol_home_view_detail" };
+        String[] table_names = new String[] { "rp_sys_dict" };
         
         boolean isNeedController = false;
 
