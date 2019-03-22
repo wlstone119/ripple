@@ -1,0 +1,75 @@
+<script type="text/javascript">
+	function radio(id){
+		$.ajax({
+				url : "/crawler/songData",
+				type : "get",
+				dataType : "json",
+				data : {
+					songId : id,
+				},
+				success : function(result) {
+					$("#radio").html("");
+					$("#radio").html(result.resourcepath);
+				}
+			});
+	}
+</script>
+
+<style>
+.xuanfu{  
+    left: 0;  
+    position: fixed;  
+    bottom: 0;//这里换成top:0;就悬浮在头部  
+    width: 100%;  
+    z-index: 100;  
+}  
+</style>
+<div id="radio"class="xuanfu" width="1000" height="100"></div>
+<!-- section start -->
+<!-- ================ -->
+<div class="section clearfix object-non-visible" data-animation-effect="fadeInUpSmall" data-effect-delay="300">
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+
+				<h2>Latest Projects</h2>
+				<div class="separator-2"></div>
+
+				<!-- isotope filters start -->
+				<div class="filters margin-bottom-clear">
+					<ul class="nav nav-pills">
+						<li class="active"><a href="#" data-filter="*">All</a></li>
+						<li><a href="#" data-filter=".web-design">Web design</a></li>
+						<li><a href="#" data-filter=".app-development">App development</a></li>
+						<li><a href="#" data-filter=".site-building">Site building</a></li>
+					</ul>
+				</div>
+				<!-- isotope filters end -->
+
+				<!-- portfolio items start -->
+				<div class="isotope-container row grid-space-20">
+					#foreach( $var in $songs) 
+						<div class="col-sm-3 isotope-item web-design margin-bottom-clear">
+							<div class="box-style-1 gray-bg">
+								<div class="overlay-container">
+									<img src="${var.songAlbumPic}" alt="" width=327 height=327 />
+									<a target="_blank" href="${var.songUrl}" class="overlay small">
+										<i class="fa fa-plus"></i>
+										<span>${var.songAlbum}</span>
+									</a>
+								</div>
+								<h5><a target="_blank" href="${var.songUrl}">${var.name}</a></h5>
+								<p>${var.songSheet}</p>
+								<button class="btn btn-default" onclick="radio(${var.id})">在线收听</button>
+							</div>
+						</div>
+					#end 
+				</div>
+				<!-- portfolio items end -->
+
+			</div>
+		</div>
+	</div>
+</div>
+<!-- section end -->
