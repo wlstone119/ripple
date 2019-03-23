@@ -48,6 +48,7 @@ public class LoginController extends BaseController {
             subject.login(token);
             return ResponseResult.ok();
         } catch (AuthenticationException e) {
+            logger.error("用户登陆校验异常,username:{}, password:{}", username, password, e);
             return ResponseResult.error("用户或密码错误");
         }
     }
