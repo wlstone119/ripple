@@ -24,7 +24,7 @@ public class MainGenerator {
         // 表名
         //String[] table_names = new String[] { "rp_crawler_url", "rp_crawler_songs", "rp_crawler_songs_sheet" };
         //String[] table_names = new String[] { "xd_idol", "xd_idol_home", "xd_idol_home_view","xd_idol_home_view_detail" };
-        String[] table_names = new String[] { "rp_sys_dict" };
+        String[] table_names = new String[] { "rp_sys_dict","rp_sys_log","rp_sys_user" };
         
         boolean isNeedController = false;
 

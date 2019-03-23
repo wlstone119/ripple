@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xdong.ripple.dal.mapper.system.RpSysUserDoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xdong.ripple.dal.entity.system.RpSysUserDo">
+        <id column="user_id" property="userId" />
+        <result column="username" property="username" />
+        <result column="name" property="name" />
+        <result column="password" property="password" />
+        <result column="dept_id" property="deptId" />
+        <result column="email" property="email" />
+        <result column="mobile" property="mobile" />
+        <result column="status" property="status" />
+        <result column="user_id_create" property="userIdCreate" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="sex" property="sex" />
+        <result column="birth" property="birth" />
+        <result column="pic_id" property="picId" />
+        <result column="live_address" property="liveAddress" />
+        <result column="hobby" property="hobby" />
+        <result column="province" property="province" />
+        <result column="city" property="city" />
+        <result column="district" property="district" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_id AS userId, username, name, password, dept_id AS deptId, email, mobile, status, user_id_create AS userIdCreate, gmt_create AS gmtCreate, gmt_modified AS gmtModified, sex, birth, pic_id AS picId, live_address AS liveAddress, hobby, province, city, district
+    </sql>
+
+</mapper>

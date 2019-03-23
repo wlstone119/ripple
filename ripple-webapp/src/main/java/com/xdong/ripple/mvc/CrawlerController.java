@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.xdong.ripple.annotation.Log;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
 
@@ -34,6 +35,7 @@ public class CrawlerController extends BaseController {
         return rpCrawlerSongsServiceImpl.selectById(id);
     }
 
+    @Log("音乐首页")
     @RequestMapping(value = "/home")
     @ResponseBody
     public ModelAndView pageInit(int pageNo, int pageSize) {
@@ -52,6 +54,7 @@ public class CrawlerController extends BaseController {
         return mav;
     }
 
+    @Log("音乐单曲")
     @RequestMapping(value = "/songData")
     @ResponseBody
     public Object songData(@RequestParam("songId") String songId) {
