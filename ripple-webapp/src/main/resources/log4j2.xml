@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="300">
+	<properties>
+		<property name="LOG_HOME">/Users/stone/logs</property>
+		<property name="FILE_PREFIX">ripple</property>
+		<property name="HISTORY_FILE_SUFFIX">.history</property>
+		<property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%t]
+			%c{3}:%L %msg%n</property>
+	</properties>
+
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console>
+
+		<RollingRandomAccessFile name="info_log"
+			fileName="${LOG_HOME}/${FILE_PREFIX}_info.log"
+			filePattern="${LOG_HOME}/${FILE_PREFIX}_info-%d{yyyy-MM-dd}-%i${HISTORY_FILE_SUFFIX}">
+			<Filters>
+				<ThresholdFilter level="warn" onMatch="DENY"
+					onMismatch="NEUTRAL" />
+				<ThresholdFilter level="info" onMatch="ACCEPT"
+					onMismatch="DENY" />
+			</Filters>
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingRandomAccessFile>
+
+
+		<RollingRandomAccessFile name="warn_log"
+			fileName="${LOG_HOME}/${FILE_PREFIX}_warn.log"
+			filePattern="${LOG_HOME}/${FILE_PREFIX}_warn-%d{yyyy-MM-dd}-%i${HISTORY_FILE_SUFFIX}">
+			<Filters>
+				<ThresholdFilter level="error" onMatch="DENY"
+					onMismatch="NEUTRAL" />
+				<ThresholdFilter level="warn" onMatch="ACCEPT"
+					onMismatch="DENY" />
+			</Filters>
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingRandomAccessFile>
+
+
+		<RollingRandomAccessFile name="error_log"
+			fileName="${LOG_HOME}/${FILE_PREFIX}_error.log"
+			filePattern="${LOG_HOME}/${FILE_PREFIX}_error-%d{yyyy-MM-dd}-%i${HISTORY_FILE_SUFFIX}">
+			<Filters>
+				<ThresholdFilter level="fatal" onMatch="DENY"
+					onMismatch="NEUTRAL" />
+				<ThresholdFilter level="error" onMatch="ACCEPT"
+					onMismatch="DENY" />
+			</Filters>
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingRandomAccessFile>
+
+
+		<RollingRandomAccessFile name="fatal_log"
+			fileName="${LOG_HOME}/${FILE_PREFIX}_fatal.log"
+			filePattern="${LOG_HOME}/${FILE_PREFIX}_fatal-%d{yyyy-MM-dd}-%i${HISTORY_FILE_SUFFIX}">
+			<Filters>
+				<ThresholdFilter level="fatal" onMatch="ACCEPT"
+					onMismatch="DENY" />
+			</Filters>
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingRandomAccessFile>
+	</Appenders>
+
+	<Loggers>
+		<Root level="INFO">
+			<appender-ref ref="console" />
+			<appender-ref ref="error_log" />
+			<appender-ref ref="info_log" />
+			<appender-ref ref="warn_log" />
+		</Root>
+
+		<Logger
+			name="org.apache.ibatis.logging.jdbc.PreparedStatementLogger"
+			additivity="false" level="DEBUG">
+			<appender-ref ref="console" />
+		</Logger>
+
+		<Logger name="org.springframework.context" additivity="false"
+			level="INFO">
+			<appender-ref ref="console" />
+		</Logger>
+
+		<Logger name="org.springframework.beans" additivity="false"
+			level="INFO">
+			<appender-ref ref="console" />
+		</Logger>
+
+		<Logger name="org.springframework.web" additivity="false"
+			level="INFO">
+			<appender-ref ref="console" />
+		</Logger>
+
+		<Logger name="org.springframework" additivity="false"
+			level="INFO">
+			<appender-ref ref="console" />
+		</Logger>
+
+		<Logger name="com.alibaba.dubbo" additivity="false"
+			level="WARN">
+			<appender-ref ref="warn_log" />
+		</Logger>
+
+		<Logger name="org.apache.zookeeper" additivity="false"
+			level="ERROR">
+			<appender-ref ref="error_log" />
+		</Logger>
+
+		<Logger name="org.I0Itec.zkclient" additivity="false"
+			level="ERROR">
+			<appender-ref ref="error_log" />
+		</Logger>
+
+		<Logger name="org.apache.http" additivity="false" level="INFO">
+			<appender-ref ref="info_log" />
+		</Logger>
+
+		<Logger name="org.apache.commons" additivity="false"
+			level="INFO">
+			<appender-ref ref="info_log" />
+		</Logger>
+
+		<Logger name="httpclient.wire.header" additivity="false"
+			level="INFO">
+			<appender-ref ref="info_log" />
+		</Logger>
+
+		<Logger name="httpclient.wire.content" additivity="false"
+			level="INFO">
+			<appender-ref ref="info_log" />
+		</Logger>
+
+		<Logger name="RocketmqClient" additivity="false" level="ERROR">
+			<appender-ref ref="error_log" />
+		</Logger>
+
+		<Logger name="com.taobao.diamond" additivity="false"
+			level="WARN">
+			<appender-ref ref="error_log" />
+		</Logger>
+
+		<Logger name="com.weidai.diamond" additivity="false"
+			level="ERROR">
+			<appender-ref ref="error_log" />
+		</Logger>
+	</Loggers>
+</Configuration>

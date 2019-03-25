@@ -15,12 +15,12 @@
         <result column="crawler_url" property="crawlerUrl" />
         <result column="type" property="type" />
         <result column="crawler_class" property="crawlerClass" />
-        <result column="isValid" property="isValid" />
+        <result column="is_valid" property="isValid" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, name, module_name AS moduleName, domain_name AS domainName, crawler_url AS crawlerUrl, type, crawler_class AS crawlerClass, isValid
+        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, name, module_name AS moduleName, domain_name AS domainName, crawler_url AS crawlerUrl, type, crawler_class AS crawlerClass, is_valid
     </sql>
 
 </mapper>

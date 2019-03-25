@@ -7,15 +7,6 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import java.io.Serializable;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
 
 /**
  * <p>
@@ -86,6 +77,7 @@ public class RpCrawlerUrlDo extends Model<RpCrawlerUrlDo> {
     /**
      * 是否有效
      */
+    @TableField("is_valid")
     private String isValid;
 
 

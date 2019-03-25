@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -25,8 +26,9 @@
 		<module>ripple-dal</module>
 		<module>ripple-spi</module>
 		<module>ripple-service</module>
-		<module>ripple-webapp</module>
 		<module>ripple-common</module>
+		<module>ripple-crawler</module>
+		<module>ripple-webapp</module>
 	</modules>
 
 	<dependencyManagement>
@@ -48,8 +50,25 @@
 			</dependency>
 			<dependency>
 				<groupId>com.xdong.ripple</groupId>
+				<artifactId>ripple-crawler</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.xdong.ripple</groupId>
 				<artifactId>ripple-common</artifactId>
 				<version>1.0</version>
+			</dependency>
+
+			<!-- 爬虫 -->
+			<dependency>
+				<groupId>edu.uci.ics</groupId>
+				<artifactId>crawler4j</artifactId>
+				<version>4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jsoup</groupId>
+				<artifactId>jsoup</artifactId>
+				<version>1.9.2</version>
 			</dependency>
 
 			<!-- 数据库监控 -->
@@ -81,15 +100,15 @@
 				<version>1.7</version>
 			</dependency>
 			<dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity-tools</artifactId>
-                <version>2.0</version>
-            </dependency>
+				<groupId>org.apache.velocity</groupId>
+				<artifactId>velocity-tools</artifactId>
+				<version>2.0</version>
+			</dependency>
 			<dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>1.3</version>
-            </dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.3</version>
+			</dependency>
 
 			<!-- spring全家桶 -->
 

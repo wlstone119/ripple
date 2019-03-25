@@ -9,12 +9,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.xdong.ripple.annotation.Log;
+import com.xdong.ripple.crawler.common.ParamVo;
+import com.xdong.ripple.crawler.strategy.CrawlerStrategyClient;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
 
@@ -28,6 +31,9 @@ public class CrawlerController extends BaseController {
 
     @Autowired
     private IRpCrawlerSongsService rpCrawlerSongsServiceImpl;
+
+    @Autowired
+    private CrawlerStrategyClient  crawlerStrategyClient;
 
     @RequestMapping("/list")
     @ResponseBody
@@ -59,5 +65,35 @@ public class CrawlerController extends BaseController {
     @ResponseBody
     public Object songData(@RequestParam("songId") String songId) {
         return rpCrawlerSongsServiceImpl.selectById(Long.parseLong(songId));
+    }
+
+    @RequestMapping(value = "/index", method = { RequestMethod.GET, RequestMethod.POST })
+    public ModelAndView execute() {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName(getUrl(prefix, "crawler"));
+        return mav;
+    }
+
+    @RequestMapping(value = "/crawl", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public Object crawl(ParamVo paramVo) {
+        try {
+            return crawlerStrategyClient.execute(paramVo);
+        } catch (Exception e) {
+            logger.error("爬虫任务调度时出现异常", e);
+            return false;
+        }
+    }
+
+    @RequestMapping(value = "/index", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean index() {
+        try {
+            // indexer.index(true);
+            return true;
+        } catch (Exception e) {
+            logger.error("新闻索引异常", e);
+            return false;
+        }
     }
 }
