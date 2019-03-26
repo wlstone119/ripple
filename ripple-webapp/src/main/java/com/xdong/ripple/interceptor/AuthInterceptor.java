@@ -18,20 +18,20 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
 
-        logger.info("预处理请求拦截");
+        //logger.info("预处理请求拦截");
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) throws Exception {
-        logger.info("处理请求拦截");
+        //logger.info("处理请求拦截");
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
                                 Exception ex) throws Exception {
-        logger.info("请求后拦截");
+        //logger.info("请求后拦截");
     }
 
 }

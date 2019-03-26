@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" monitorInterval="300">
 	<properties>
-		<property name="LOG_HOME">/Users/stone/logs</property>
+		<property name="LOG_HOME">/Users/stone/ripple/logs/ripple.log</property>
 		<property name="FILE_PREFIX">ripple</property>
 		<property name="HISTORY_FILE_SUFFIX">.history</property>
-		<property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%t]
-			%c{3}:%L %msg%n</property>
+		<property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%X{_TRACE_ID}] [%X{_USER_ID}] [%t] %c{3}:%L %msg%n</property>
 	</properties>
 
 	<Appenders>
@@ -92,7 +91,19 @@
 		</Root>
 
 		<Logger
-			name="org.apache.ibatis.logging.jdbc.PreparedStatementLogger"
+			name="org.apache.ibatis.logging"
+			additivity="false" level="DEBUG">
+			<appender-ref ref="console" />
+		</Logger>
+		
+		<Logger
+			name="com.baomidou.mybatisplus.mapper"
+			additivity="false" level="DEBUG">
+			<appender-ref ref="console" />
+		</Logger>
+		
+		<Logger
+			name="com.xdong.ripple.dal.mapper"
 			additivity="false" level="DEBUG">
 			<appender-ref ref="console" />
 		</Logger>
@@ -117,21 +128,6 @@
 			<appender-ref ref="console" />
 		</Logger>
 
-		<Logger name="com.alibaba.dubbo" additivity="false"
-			level="WARN">
-			<appender-ref ref="warn_log" />
-		</Logger>
-
-		<Logger name="org.apache.zookeeper" additivity="false"
-			level="ERROR">
-			<appender-ref ref="error_log" />
-		</Logger>
-
-		<Logger name="org.I0Itec.zkclient" additivity="false"
-			level="ERROR">
-			<appender-ref ref="error_log" />
-		</Logger>
-
 		<Logger name="org.apache.http" additivity="false" level="INFO">
 			<appender-ref ref="info_log" />
 		</Logger>
@@ -151,18 +147,5 @@
 			<appender-ref ref="info_log" />
 		</Logger>
 
-		<Logger name="RocketmqClient" additivity="false" level="ERROR">
-			<appender-ref ref="error_log" />
-		</Logger>
-
-		<Logger name="com.taobao.diamond" additivity="false"
-			level="WARN">
-			<appender-ref ref="error_log" />
-		</Logger>
-
-		<Logger name="com.weidai.diamond" additivity="false"
-			level="ERROR">
-			<appender-ref ref="error_log" />
-		</Logger>
 	</Loggers>
 </Configuration>
