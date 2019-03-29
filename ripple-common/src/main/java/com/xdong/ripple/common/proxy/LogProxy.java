@@ -9,8 +9,6 @@ import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 
-import com.alibaba.fastjson.JSON;
-
 @SuppressWarnings("rawtypes")
 public class LogProxy {
 
@@ -76,7 +74,7 @@ public class LogProxy {
 
         private void after(String methodName, Object[] args) {
             if ("error".equals(methodName)) {
-                
+
             }
         }
 
