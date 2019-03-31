@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.xdong.ripple.annotation.Log;
 import com.xdong.ripple.common.utils.MD5Utils;
 import com.xdong.ripple.common.utils.ResponseResult;
 import com.xdong.ripple.common.utils.ShiroUtils;
+import com.xdong.ripple.commonservice.annotation.Log;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

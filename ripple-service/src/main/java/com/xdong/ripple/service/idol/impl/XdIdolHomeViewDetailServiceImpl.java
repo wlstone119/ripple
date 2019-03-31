@@ -2,6 +2,7 @@ package com.xdong.ripple.service.idol.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.xdong.ripple.commonservice.annotation.EncryptSecurity;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeDo;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDetailDo;
 import com.xdong.ripple.dal.mapper.idol.XdIdolHomeViewDetailDoMapper;
@@ -36,6 +37,7 @@ public class XdIdolHomeViewDetailServiceImpl extends ServiceImpl<XdIdolHomeViewD
         return selectList(entityWrapper);
     }
 
+    @EncryptSecurity({ "content", "title", "mTime", "mUser" })
     @Override
     public List<XdIdolHomeViewDetailDo> getHomeViewDetailByIdolId(Long idolId) {
         List<XdIdolHomeViewDetailDo> homeViewList = new ArrayList<XdIdolHomeViewDetailDo>();

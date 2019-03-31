@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.xdong.ripple.common.vo.XdIdolHomeViewDetailVo;
+import com.xdong.ripple.commonservice.annotation.DecryptSecurity;
+import com.xdong.ripple.commonservice.aspect.TestParam;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDetailDo;
 import com.xdong.ripple.dal.entity.system.RpSysDictDo;
 import com.xdong.ripple.spi.idol.IXdIdolHomeViewDetailService;
@@ -40,9 +42,10 @@ public class IdolController extends BaseController {
     @Autowired
     private IRpSysDictService            rpSysDictServiceImpl;
 
+    @DecryptSecurity({"enctryIdolStr","testParam:paramName,paramName2"})
     @RequestMapping(value = "/home", method = { RequestMethod.GET, RequestMethod.POST })
     @ResponseBody
-    public ModelAndView pageInit(String enctryIdolStr) {
+    public ModelAndView pageInit(String enctryIdolStr, TestParam testParam) {
         ModelAndView mav = new ModelAndView();
 
         if (StringUtils.isNotBlank(enctryIdolStr)) {

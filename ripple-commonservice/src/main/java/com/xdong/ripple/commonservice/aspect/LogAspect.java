@@ -1,36 +1,36 @@
-package com.xdong.ripple.aspect;
+package com.xdong.ripple.commonservice.aspect;
 
 import java.lang.reflect.Method;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.xdong.ripple.annotation.Log;
 import com.xdong.ripple.common.utils.HttpContextUtils;
 import com.xdong.ripple.common.utils.IPUtils;
+import com.xdong.ripple.commonservice.annotation.Log;
 import com.xdong.ripple.dal.entity.system.RpSysLogDo;
 import com.xdong.ripple.spi.system.IRpSysLogService;
 
 @Aspect
 @Component
 public class LogAspect {
-
-    private static final Logger logger = LogManager.getLogger(LogAspect.class);
+    
+    private final Logger        logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     IRpSysLogService            rpSysLogServiceImpl;
 
-    @Pointcut("@annotation(com.xdong.ripple.annotation.Log)")
+    @Pointcut("@annotation(com.xdong.ripple.commonservice.annotation.Log)")
     public void logPointCut() {
     }
 

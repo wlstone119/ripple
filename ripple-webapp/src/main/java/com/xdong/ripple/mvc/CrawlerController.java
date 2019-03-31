@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.xdong.ripple.annotation.Log;
+import com.xdong.ripple.commonservice.annotation.Log;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyClient;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
