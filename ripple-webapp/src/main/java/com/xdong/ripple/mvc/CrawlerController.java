@@ -1,5 +1,6 @@
 package com.xdong.ripple.mvc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.xdong.ripple.commonservice.annotation.Log;
 import com.xdong.ripple.crawler.common.ParamVo;
@@ -44,12 +47,16 @@ public class CrawlerController extends BaseController {
     @Log("音乐首页")
     @RequestMapping(value = "/home")
     @ResponseBody
-    public ModelAndView pageInit(int pageNo, int pageSize) {
+    public ModelAndView pageInit(int pageNo, int pageSize, String name, String flag) {
 
         Page<RpCrawlerSongsDo> page = new Page<RpCrawlerSongsDo>();
         page.setCurrent(pageNo);
         page.setSize(pageSize);
-        Page<RpCrawlerSongsDo> result = rpCrawlerSongsServiceImpl.selectPage(page);
+
+        Wrapper<RpCrawlerSongsDo> wrapper = new EntityWrapper<RpCrawlerSongsDo>();
+        wrapper.eq("name", name).orderBy("name", true);
+
+        Page<RpCrawlerSongsDo> result = rpCrawlerSongsServiceImpl.selectPage(page, wrapper);
 
         Map<String, List<RpCrawlerSongsDo>> modelMap = new HashMap<String, List<RpCrawlerSongsDo>>();
         modelMap.put("songs", result.getRecords());

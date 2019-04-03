@@ -7,6 +7,9 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.antgroup.zmxy.openplatform.api.internal.util.Base64Util;
+
 import java.security.SecureRandom;
 
 public class AESUtil {
@@ -16,6 +19,7 @@ public class AESUtil {
      * KEY(长度16)
      */
     private final static String KEY     = "V1dnjVpZbl38LKqX";
+
     /**
      * 向量(长度16)
      */
@@ -28,15 +32,13 @@ public class AESUtil {
      * @return
      * @throws Exception
      */
-    public static String encrypt(String body) throws Exception {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(KEY.getBytes(), "AES");
+    public static String encrypt(String key, String body) throws Exception {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(Base64Utils.decode(key), "AES");
         // 算法/模式/补码方式
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(VECTOR.getBytes());
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
         byte[] encodeAES = cipher.doFinal(body.getBytes(CHARSET));
-        // base64 makeResponse
-        return new BASE64Encoder().encode(encodeAES);
+        return Base64Utils.encode(encodeAES);
     }
 
     /**
@@ -46,16 +48,55 @@ public class AESUtil {
      * @return
      * @throws Exception
      */
-    public static String decrypt(String body) throws Exception {
+    public static String decrypt(String aesBase64Key, String body) throws Exception {
         // base64 decode
-        byte[] decode64 = new BASE64Decoder().decodeBuffer(body);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(KEY.getBytes(), "AES");
+        byte[] decode64 = Base64Utils.decode(body);
+        SecretKeySpec skeySpec = new SecretKeySpec(Base64Utils.decode(aesBase64Key), "AES");
         // 算法/模式/补码方式
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        IvParameterSpec iv = new IvParameterSpec(VECTOR.getBytes());
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, skeySpec);
         byte[] decodeAES = cipher.doFinal(decode64);
         return new String(decodeAES, CHARSET);
+    }
+
+    public static String decrypt(String encryptedData, String aesBase64Key, String charset) throws Exception {
+        // AES加密
+        Cipher cipher = initCipher(aesBase64Key, Cipher.DECRYPT_MODE);
+
+        byte[] bytOut = cipher.doFinal(Base64Util.base64ToByteArray(encryptedData));
+        String result = new String(bytOut, charset);
+
+        // ios加密的数据解密后会吗会出现ascii码等于0的填充值,需要去掉
+        int indexOfNil = result.indexOf('\u0000');
+        if (indexOfNil >= 0) {
+            result = result.substring(0, indexOfNil);
+        }
+        return result;
+    }
+
+    /**
+     * @param aesBase64Key
+     * @param mode 指定是加密还是解密模式
+     * @return
+     * @throws Exception
+     */
+    public static Cipher initCipher(String aesBase64Key, int mode) throws Exception {
+        SecretKeySpec skeySpec = getSecretKeySpec(aesBase64Key);
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(mode, skeySpec);
+        return cipher;
+    }
+
+    /**
+     * 根据base64编码的key获取SecretKeySpec对象
+     * 
+     * @param aesBase64Key base64编码的key
+     * @return SecretKeySpec对象
+     * @throws Exception 获取SecretKeySpec对象异常
+     */
+    public static SecretKeySpec getSecretKeySpec(String aesBase64Key) throws Exception {
+        SecretKeySpec skeySpec = new SecretKeySpec(Base64Utils.decode(aesBase64Key), "AES");
+        return skeySpec;
     }
 
     /**
