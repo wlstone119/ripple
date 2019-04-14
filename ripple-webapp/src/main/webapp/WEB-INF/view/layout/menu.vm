@@ -96,18 +96,23 @@
 											<ul class="dropdown-menu">
 												<li>
 													<div class="row">
-														<div class="col-lg-4 col-md-3 hidden-sm">
-															<h4>Premium HTML5 Template</h4>
-															<p>iDea is perfectly suitable for corporate, business and company webpages.</p>
-															<img src="/s/images/section-image-3.png" alt="iDea">
-														</div>
 														<div class="col-lg-8 col-md-9">
-															<h4>Pages</h4>
+															<h4>相关明星</h4>
 															<div class="row">
 																<div class="col-sm-4">
 																	<div class="divider"></div>
 																	<ul class="menu">
-																		<li><a href="/idol/home?enctryIdolStr=1"><i class="icon-right-open"></i>lizixuan</a></li>
+																		<li><a href="/idol/home?enctryIdolStr=1"><i class="icon-right-open"></i>李子璇</a></li>
+																	</ul>
+																</div>
+																<div class="col-sm-4">
+																	<div class="divider"></div>
+																	<ul class="menu">
+																	</ul>
+																</div>
+																<div class="col-sm-4">
+																	<div class="divider"></div>
+																	<ul class="menu">
 																	</ul>
 																</div>
 															</div>
