@@ -133,7 +133,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface {
             Elements songSheetDiv = songs.getElementsByClass("cntc");
             Elements songsList = songsDiv.getElementsByTag("ul");
             if (songsList != null) {
-                writeToDB(songsList.html().replaceAll("&quot;", "\""), songSheetDiv.get(0));
+                writeToDB(songsList, songSheetDiv.get(0));
             }
         } else {
             if (!songSheet.children().isEmpty()) {
@@ -148,11 +148,9 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface {
      * 将得到的歌集下的音乐保存至数据库
      * 
      * @param musicTr
+     * @throws IOException
      */
-    private void writeToDB(String songJson, Element songSheetDiv) {
-        if (StringUtils.isEmpty(songJson)) {
-            return;
-        }
+    private void writeToDB(Elements songsList, Element songSheetDiv) throws IOException {
 
         RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
         songDo.setcTime(new Date());
@@ -177,41 +175,60 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface {
         songDo.setType(sb.toString());
 
         String songUrl = "";
-        JSONArray songs = JSONArray.parseArray(songJson);
-        for (int i = 0; i < songs.size(); i++) {
-            JSONObject song = songs.getJSONObject(i);
+        String href = null;
+        Elements songs = songsList.get(0).getElementsByTag("li");
+        for (Element song : songs) {
+            href = song.getElementsByTag("a").attr("href");
+            songUrl = getSongUrlById(href);
 
-            songUrl = getSongUrlById(song.getString("id"));
-            // 播放器
-            songDo.setResourcepath(appendIframe(song.getString("id")));
+            // 歌名
+            songDo.setName(song.getElementsByTag("a").html());
+            // 歌曲url
             songDo.setSongUrl(songUrl);
-            songDo.setSongAlbum(song.getJSONObject("album").getString("name"));
-            songDo.setSongAlbumPic(song.getJSONObject("album").getString("picUrl"));
-            JSONArray array = song.getJSONArray("artists");
+            // 播放器
+            songDo.setResourcepath(appendIframe(songUrl));
 
-            String author = "";
-            for (int b = 0; b < array.size(); b++) {
-                author += array.getJSONObject(b).getString("name") + " ";
-            }
-            songDo.setSongAuthor(author);
+            // 歌曲url获取信息
+            Document songDetail = CrawlerUtil.connectUrl(songDo.getSongUrl());
+            Elements songDetailDiv = songDetail.getElementsByClass("cnt");
+            Elements songDetailArr = songDetailDiv.get(0).getElementsByTag("p");
+            for (int i = 0; i < songDetailArr.size(); i++) {
+                Element ele = songDetailArr.get(i);
 
-            String duration = song.getString("duration");
-            songDo.setName(song.getString("name"));
-            if (StringUtils.isNotEmpty(duration)) {
-                songDo.setSongDuration(DateUtil.getMinSecByTotalMill(Long.parseLong(duration)));
+                if (containSpan(ele)) {
+                    songDo.setSongAuthor(ele.getElementsByTag("span").attr("title"));
+                } else {
+                    songDo.setSongAlbum(ele.getElementsByTag("a").html());
+                }
             }
+
+            // 专辑图片
+            Elements eles = songDetail.getElementsByClass("f-cb");
+            Element albumPic = eles.get(0);
+            String albumPicUrl = albumPic.getElementsByTag("img").attr("src");
+            songDo.setSongAlbumPic(albumPicUrl.indexOf("?") > 0 ? albumPicUrl.substring(0,
+                                                                                        albumPicUrl.indexOf("?")) : albumPicUrl);
 
             rpSongsServiceImpl.insert(songDo);
         }
 
     }
 
+    private boolean containSpan(Element ele) {
+        for (Element unit : ele.children()) {
+            if (!unit.getElementsByTag("span").isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private String appendUrl(String url) {
         return domainUrl + url;
     }
 
-    private String getSongUrlById(String id) {
-        return domainUrl + "/song?id=" + id;
+    private String getSongUrlById(String songIdStr) {
+        return domainUrl + songIdStr;
     }
 
     private String appendIframe(String id) {

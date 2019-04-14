@@ -115,15 +115,32 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
             }
             // 获取歌单下的所有歌曲
             Document songs = connectUrl(songUrl);
-            Elements musicTbody = songs.getElementsByClass("song-list-btnBottom");
-            if (musicTbody.isEmpty()) {
-                musicTbody = songs.getElementsByClass("song-list-btnBoth");
-            }
+            Elements songSheetEle = songs.getElementsByClass("songlist-info-inside");
+            Elements musicTbody = songs.getElementsByClass("song-list-wrap");
+
             if (!musicTbody.isEmpty()) {
                 Element ul = musicTbody.get(0).getElementsByTag("ul").get(0);
                 if (!ul.children().isEmpty()) {
+
+                    RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
+                    songDo.setcTime(new Date());
+                    songDo.setmTime(new Date());
+                    songDo.setmUser("system");
+                    songDo.setcUser("system");
+                    songDo.setStatus("valid");
+                    songDo.setResource(Constant.CRAWLER_RESOURCE_BAIDU);
+
+                    // 填充歌单信息
+                    fillSongSheet(songSheetEle, songDo);
+
                     for (Element musicLi : ul.children()) {
-                        writeToDB(musicLi);
+
+                        // 填充歌曲信息
+                        for (Element var : musicLi.children()) {
+                            loopSong(var, songDo);
+                        }
+
+                        rpSongsServiceImpl.insert(songDo);
                     }
                 }
             }
@@ -136,56 +153,53 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
         }
     }
 
-    /**
-     * 将得到的歌集下的音乐保存至数据库
-     * 
-     * @param musicTr
-     */
-    private void writeToDB(Element musicTr) {
-        if (musicTr.children().isEmpty()) {
-            return;
+    private void fillSongSheet(Elements songSheetEle, RpCrawlerSongsDo songDo) {
+        Elements elems = songSheetEle.get(0).children();
+        for (Element var : elems) {
+            if (var.hasClass("songlist-info-pic")) {
+                String songPicUrl = var.getElementsByTag("img").attr("src");
+                songDo.setSongAlbumPic(songPicUrl);
+            } else if (var.hasClass("songlist-info-msg")) {
+                String songSheet = var.getElementsByTag("h1").html().trim();
+                Element songSheetDiv = var.getElementsByClass("songlist-info-tag").get(0);
+                String type = "";
+                for (Element typeVar : songSheetDiv.children()) {
+                    if (typeVar.html().contains("标签")) {
+                        type += typeVar.html();
+                    } else {
+                        type += typeVar.html() + ",";
+                    }
+                }
+                songDo.setType(type.substring(0, type.length() - 1));
+                songDo.setSongSheet(songSheet);
+            }
         }
 
-        RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
-        songDo.setcTime(new Date());
-        songDo.setmTime(new Date());
-        songDo.setmUser("system");
-        songDo.setcUser("system");
-        songDo.setStatus("valid");
-        songDo.setResource(Constant.CRAWLER_RESOURCE_BAIDU);
-
-        for (Element var : musicTr.children()) {
-            loopSong(var, songDo);
-        }
-
-        rpSongsServiceImpl.insert(songDo);
-        // logger.info(String.format("成功保存歌曲：歌曲名【%s】-- 歌手【%s】",
-        // songDo.getName(), songDo.getSongAuthor()));
     }
 
     private void loopSong(Element var, RpCrawlerSongsDo songDo) {
-        if (var.hasClass("song-title")) {
+        if (var.hasClass("songlist-title")) {
             Element aHref = var.child(0);
-            String songName = aHref.html();
-            String songUrl = aHref.attr("href").trim();
+            String songName = aHref.getElementsByTag("a").attr("title").trim();
+            String songUrl = aHref.getElementsByTag("a").attr("href").trim();
             songDo.setName(songName);
             if (!songUrl.startsWith("http") && !songUrl.startsWith("https")) {
                 songUrl = appendUrl(songUrl);
             }
             songDo.setSongUrl(songUrl);
-        } else if (var.hasClass("singer")) {
+        } else if (var.hasClass("songlist-album")) {
             if (!var.children().isEmpty()) {
-                Node singerHref = var.child(0);
+                Element singerHref = var.child(0);
                 if (singerHref != null) {
-                    String singer = singerHref.attr("title").trim();
+                    String singer = singerHref.getElementsByTag("a").html().trim();
                     songDo.setSongAuthor(singer);
                 }
             }
-        } else if (var.hasClass("album-title")) {
-            if (!var.childNodes().isEmpty()) {
-                Node aHref = var.childNode(0);
+        } else if (var.hasClass("album-name")) {
+            if (!var.children().isEmpty()) {
+                Element aHref = var.child(0);
                 if (aHref != null) {
-                    String albumName = aHref.attr("title").trim();
+                    String albumName = aHref.html();
                     songDo.setSongAlbum(albumName);
                 }
             }
