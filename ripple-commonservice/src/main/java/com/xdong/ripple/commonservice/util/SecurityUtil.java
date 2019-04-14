@@ -1,5 +1,7 @@
 package com.xdong.ripple.commonservice.util;
 
+import java.net.URLEncoder;
+
 import com.antgroup.zmxy.openplatform.api.internal.util.AESUtil;
 import com.xdong.ripple.commonservice.util.security.AESUtils;
 import com.xdong.ripple.commonservice.util.security.Base64Utils;
@@ -55,6 +57,7 @@ public class SecurityUtil {
         String key2 = AESUtil.initKey();
         System.out.println("芝麻密钥：" + key2 + "===" + key2.length());
         System.out.println("芝麻加密：" + AESUtil.encrypt("1", aesBase64Key, charset));
+        System.out.println("芝麻加密：" + URLEncoder.encode(AESUtil.encrypt("1", aesBase64Key, charset)));
         System.out.println("芝麻解密："
                            + AESUtil.decrypt(AESUtil.encrypt("1", aesBase64Key, charset), aesBase64Key, charset));
 

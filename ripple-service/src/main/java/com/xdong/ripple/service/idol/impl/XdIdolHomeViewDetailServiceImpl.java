@@ -37,7 +37,6 @@ public class XdIdolHomeViewDetailServiceImpl extends ServiceImpl<XdIdolHomeViewD
         return selectList(entityWrapper);
     }
 
-    @EncryptSecurity({ "content", "title", "mTime", "mUser" })
     @Override
     public List<XdIdolHomeViewDetailDo> getHomeViewDetailByIdolId(Long idolId) {
         List<XdIdolHomeViewDetailDo> homeViewList = new ArrayList<XdIdolHomeViewDetailDo>();

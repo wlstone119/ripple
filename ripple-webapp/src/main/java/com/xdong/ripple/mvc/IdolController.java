@@ -42,7 +42,6 @@ public class IdolController extends BaseController {
     @Autowired
     private IRpSysDictService            rpSysDictServiceImpl;
 
-    @DecryptSecurity({"enctryIdolStr","testParam:paramName,paramName2"})
     @RequestMapping(value = "/home", method = { RequestMethod.GET, RequestMethod.POST })
     @ResponseBody
     public ModelAndView pageInit(String enctryIdolStr, TestParam testParam) {
