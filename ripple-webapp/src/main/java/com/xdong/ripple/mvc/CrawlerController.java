@@ -1,6 +1,5 @@
 package com.xdong.ripple.mvc;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,24 @@ public class CrawlerController extends BaseController {
     @Autowired
     private CrawlerStrategyClient  crawlerStrategyClient;
 
+    @RequestMapping("/index")
+    @ResponseBody
+    public ModelAndView search(String queryKey) {
+
+        ModelAndView mav = new ModelAndView();
+        
+        ParamVo paramVo = new ParamVo();
+        paramVo.setSearchKey(queryKey);
+        crawlerStrategyClient.search(paramVo);
+
+        List<RpCrawlerSongsDo> crawlerList = rpCrawlerSongsServiceImpl.searchBykey(queryKey);
+        if (StringUtils.isNotBlank(queryKey)) {
+            mav.addObject("crawlerList", crawlerList);
+        }
+        mav.setViewName(getUrl(prefix, "search"));
+        return mav;
+    }
+
     @RequestMapping("/list")
     @ResponseBody
     public RpCrawlerSongsDo getSongsList(Long id) {
@@ -55,7 +72,7 @@ public class CrawlerController extends BaseController {
         page.setSize(pageSize);
 
         Wrapper<RpCrawlerSongsDo> wrapper = new EntityWrapper<RpCrawlerSongsDo>();
-        if(StringUtils.isNotBlank(name)) {
+        if (StringUtils.isNotBlank(name)) {
             wrapper.eq("name", name).orderBy("name", true);
         }
 
@@ -77,7 +94,7 @@ public class CrawlerController extends BaseController {
         return rpCrawlerSongsServiceImpl.selectById(Long.parseLong(songId));
     }
 
-    @RequestMapping(value = "/index", method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value = "/indexold", method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView execute() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName(getUrl(prefix, "crawler"));
@@ -95,7 +112,7 @@ public class CrawlerController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/index", method = RequestMethod.POST)
+    @RequestMapping(value = "/indexer", method = RequestMethod.POST)
     @ResponseBody
     public boolean index() {
         try {

@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,12 +17,10 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.xdong.ripple.common.utils.DateUtil;
 import com.xdong.ripple.crawler.common.Constant;
 import com.xdong.ripple.crawler.common.CrawlerUtil;
 import com.xdong.ripple.crawler.common.ParamVo;
+import com.xdong.ripple.crawler.strategy.CrawlerSearchInterface;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyInterface;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
@@ -34,7 +31,7 @@ import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
  * @author wanglei Mar 24, 2019 9:21:38 PM
  */
 @Service
-public class WyCloudMusicCrawler implements CrawlerStrategyInterface {
+public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSearchInterface {
 
     private static Logger          logger    = Logger.getLogger(WyCloudMusicCrawler.class);
 
@@ -237,4 +234,42 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface {
                + "&auto=1&height=66\"></iframe>";
     }
 
+    @Override
+    public Object search(ParamVo paramVo) {
+        try {
+            Document dom = CrawlerUtil.connectUrl(paramVo.getUrl());
+            Element songSheets = dom.getElementById("m-search");
+            if (songSheets != null) {
+                for (Element songSheet : songSheets.children()) {
+                    loopSearchList(songSheet);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("io exception:", e);
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    private void loopSearchList(Element songSheet) {
+        if ("srchsongst".equals(songSheet.attr("class"))) {
+            Elements elements = songSheet.children();
+            for (Element ele : elements) {
+                loopTable(ele);
+            }
+        } else {
+            if (!songSheet.children().isEmpty()) {
+                loopSearchList(songSheet);
+            }
+        }
+    }
+    
+    private void loopTable(Element ele) {
+        Elements elements = ele.children();
+        for(Element ele2 : elements) {
+            
+        }
+        
+    }
 }

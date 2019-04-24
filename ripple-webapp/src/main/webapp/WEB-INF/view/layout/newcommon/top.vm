@@ -1,0 +1,8 @@
+<div id="Box-top">
+  <div id="Box-top-nav"><a onfocus="this.blur()" href="member/">我的账户</a><a onfocus="this.blur()" href="#">每日特惠</a><a onfocus="this.blur()" href="#">断码专区</a><a onfocus="this.blur()" href="#">积分回馈</a><a onfocus="this.blur()" href="#">论坛</a><a onfocus="this.blur()" href="#">网站联盟</a><a onfocus="this.blur()" href="#">帮助中心</a><a onfocus="this.blur()" href="#"><img src="images/Home-box_01.jpg" width="70" height="16" alt="在线客服" /></a></div>
+  <div id="Box-top-logo">
+    <h1><a onfocus="this.blur()" href="#"><img src="images/Home-box_03.jpg" alt="E6Mall 铱王星 在线商城" width="244" height="32" /></a></h1>
+    <p class="Box-top-login">您好，欢迎光临E6Mall 铱王星。#if( $session.getAttribute("member") )<a href="member/index.htm">我的E6Mall</a>#else<a onfocus="this.blur()" href="login.htm">登录</a> | <a onfocus="this.blur()" href="register.htm">注册</a>#end</p>
+    <p class="Box-top-tel"><img src="images/Home-box_05.jpg" alt="订购热线（免长途费）" width="122" height="14" /></p>
+    <div class="clear"></div>
+  </div>

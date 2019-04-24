@@ -58,8 +58,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         resolver.setRequestContextAttribute("rc");
         resolver.setDateToolAttribute("dateTool");
         resolver.setNumberToolAttribute("numberTool");
-        resolver.setLayoutKey("/layout/idol.vm");
-        resolver.setLayoutUrl("/layout/idol.vm");
+        resolver.setLayoutKey("/layout/crawler.vm");
+        resolver.setLayoutUrl("/layout/crawler.vm");
         resolver.setScreenContentKey("screen_content");
         resolver.setOrder(-9999);
         return resolver;

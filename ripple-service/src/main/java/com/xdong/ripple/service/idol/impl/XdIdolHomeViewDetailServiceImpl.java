@@ -9,11 +9,18 @@ import com.xdong.ripple.dal.mapper.idol.XdIdolHomeViewDetailDoMapper;
 import com.xdong.ripple.spi.idol.IXdIdolHomeService;
 import com.xdong.ripple.spi.idol.IXdIdolHomeViewDetailService;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * <p>
@@ -26,6 +33,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class XdIdolHomeViewDetailServiceImpl extends ServiceImpl<XdIdolHomeViewDetailDoMapper, XdIdolHomeViewDetailDo> implements IXdIdolHomeViewDetailService {
 
+    private final Logger                 logger = LoggerFactory.getLogger(this.getClass());
+    
     @Autowired
     private IXdIdolHomeService xdIdolHomeServiceImpl;
 
@@ -45,5 +54,22 @@ public class XdIdolHomeViewDetailServiceImpl extends ServiceImpl<XdIdolHomeViewD
             homeViewList = getHomeViewList(idoHome.getHomeId());
         }
         return homeViewList;
+    }
+
+    @Transactional
+    @Override
+    public void saveData(XdIdolHomeViewDetailDo viewDo1, XdIdolHomeViewDetailDo viewDo2, Integer isRuntime) throws IOException {
+        
+        try {
+            updateById(viewDo1);
+            updateById(viewDo2);
+            if (isRuntime == 1) {
+                throw new RuntimeException("异常");
+            } else if (isRuntime == 2) {
+                throw new IOException("123");
+            }
+        } catch (Exception e) {
+            logger.error("rollbackOnly:{}", TransactionSynchronizationManager.isCurrentTransactionReadOnly(), e);
+        }
     }
 }
