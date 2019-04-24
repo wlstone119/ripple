@@ -1,5 +1,6 @@
 package com.xdong.ripple.crawler.strategy;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,5 +40,25 @@ public class CrawlerStrategyClient {
         CrawlerStrategyInterface strategy = (CrawlerStrategyInterface) SpringUtil.getBeansByName(urlDo.getCrawlerClass());
 
         return strategy.execute(paramVo);
+    }
+
+    /**
+     * 策略模式执行者帮你自动选择策略进行执行
+     * 
+     * @param paramVo
+     * @throws BizException
+     */
+    public Object search(ParamVo paramVo) throws BizException {
+
+        if (StringUtils.isBlank(paramVo.getSearchKey())) {
+            throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
+        }
+
+        RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getCrawlerUrlRecord("search", paramVo.getModelName());
+        paramVo.setUrl(String.format(urlDo.getCrawlerUrl(), paramVo.getSearchKey()));
+        paramVo.setDomainUrl(urlDo.getDomainName());
+        CrawlerSearchInterface strategy = (CrawlerSearchInterface) SpringUtil.getBeansByName(urlDo.getCrawlerClass());
+
+        return strategy.search(paramVo);
     }
 }

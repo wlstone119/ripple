@@ -7,64 +7,73 @@ package com.xdong.ripple.crawler.common;
  */
 public class ParamVo {
 
-	private String domainUrl;
-	
-	private Long urlKey;
+    private String domainUrl;
 
-	private String url;
+    private Long   urlKey;
 
-	private int begin;
+    private String url;
 
-	private int end;
-	
-	private String searchKey;
+    private int    begin;
 
-	public String getSearchKey() {
-		return searchKey;
-	}
+    private int    end;
 
-	public void setSearchKey(String searchKey) {
-		this.searchKey = searchKey;
-	}
+    private String searchKey;
 
-	public String getDomainUrl() {
-		return domainUrl;
-	}
+    private String modelName;
 
-	public void setDomainUrl(String domainUrl) {
-		this.domainUrl = domainUrl;
-	}
+    public String getSearchKey() {
+        return searchKey;
+    }
 
-	public Long getUrlKey() {
-		return urlKey;
-	}
+    public void setSearchKey(String searchKey) {
+        this.searchKey = searchKey;
+    }
 
-	public void setUrlKey(Long urlKey) {
-		this.urlKey = urlKey;
-	}
+    public String getDomainUrl() {
+        return domainUrl;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public void setDomainUrl(String domainUrl) {
+        this.domainUrl = domainUrl;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public Long getUrlKey() {
+        return urlKey;
+    }
 
-	public int getBegin() {
-		return begin;
-	}
+    public void setUrlKey(Long urlKey) {
+        this.urlKey = urlKey;
+    }
 
-	public void setBegin(int begin) {
-		this.begin = begin;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public int getEnd() {
-		return end;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public void setEnd(int end) {
-		this.end = end;
-	}
+    public int getBegin() {
+        return begin;
+    }
 
+    public void setBegin(int begin) {
+        this.begin = begin;
+    }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public void setEnd(int end) {
+        this.end = end;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 }

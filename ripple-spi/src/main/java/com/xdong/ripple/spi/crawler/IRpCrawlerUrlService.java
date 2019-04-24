@@ -13,4 +13,6 @@ import com.weidai.mp.support.service.IMPService;
  */
 public interface IRpCrawlerUrlService extends IMPService<RpCrawlerUrlDo> {
 
+    RpCrawlerUrlDo getCrawlerUrlRecord(String type, String crawlerClss);
+
 }

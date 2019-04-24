@@ -1,0 +1,91 @@
+<script type="text/javascript">
+	function radio(id){
+		$.ajax({
+				url : "/crawler/songData",
+				type : "get",
+				dataType : "json",
+				data : {
+					songId : id,
+				},
+				success : function(result) {
+					$("#radio").html("");
+					$("#radio").html(result.resourcepath);
+				}
+			});
+	}
+</script>
+
+<style>
+.xuanfu{  
+    left: 0;  
+    position: fixed;  
+    bottom: 0;//这里换成top:0;就悬浮在头部  
+    width: 100%;  
+    z-index: 100;  
+}  
+</style>
+<div id="radio"class="xuanfu" width="1000" height="100"></div>
+
+<div class="container">
+        <ul class="breadcrumb">
+            <li><a href="index.html">搜索</a></li>
+            <li><a href="javascript:;">爬虫搜索</a></li>
+            <li class="active">Search Results</li>
+        </ul>
+        <!-- BEGIN SIDEBAR & CONTENT -->
+        <div class="row margin-bottom-40">
+          <!-- BEGIN CONTENT -->
+          <div class="col-md-12">
+            <h1>Search Results</h1>
+            <div class="content-page">
+              <form action="/crawler/index" class="content-search-view2">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="queryKey" placeholder="Search...">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                  </span>
+                </div>
+              </form>
+              
+              #foreach($song in $crawlerList)
+	              <div class="search-result-item">
+	                <h4><a href="$!song.songUrl" target="_blank">$!song.name</a></h4>
+	              	<img src="${song.songAlbumPic}" alt="" width=127 height=127 />
+	                <p>$!song.songSheet</p>
+	                <p>$!song.type</p>
+	                <button type="button" class="btn btn-sm blue">$!song.resource</button>
+	                <button type="button" class="btn btn-primary" onclick="radio(${song.id})"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">播放</font></font></button>
+	              </div>
+	              <div class="search-result-item">
+			          <img src="${song.songAlbumPic}" alt="马库斯·多伊" class="img-responsive">
+			          <h3><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">马库斯·多伊</font></font></h3>
+			          <em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">创办人</font></font></em>
+			          <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Lorem ipsum dolor amet，tempor ut labore magna tempor dolore</font></font></p>
+			          <div class="tb-socio">
+			            <a href="javascript:void(0);" class="fa fa-facebook"></a>
+			            <a href="javascript:void(0);" class="fa fa-twitter"></a>
+			            <a href="javascript:void(0);" class="fa fa-google-plus"></a>
+			          </div>
+			        </div>
+			#end	
+			
+              <div class="row">
+                <div class="col-md-4 col-sm-4 items-info">Items 1 to 9 of 10 total</div>
+                <div class="col-md-8 col-sm-8">
+                  <ul class="pagination pull-right">
+                    <li><a href="javascript:;">«</a></li>
+                    <li><a href="javascript:;">1</a></li>
+                    <li><span>2</span></li>
+                    <li><a href="javascript:;">3</a></li>
+                    <li><a href="javascript:;">4</a></li>
+                    <li><a href="javascript:;">5</a></li>
+                    <li><a href="javascript:;">»</a></li>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <!-- END CONTENT -->
+        </div>
+      </div>
