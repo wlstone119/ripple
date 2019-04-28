@@ -193,7 +193,6 @@
 			</dependency>
 
 			<!-- 第三方 -->
-
 			<dependency>
 				<groupId>com.antgroup.zmxy</groupId>
 				<artifactId>openplatform.api</artifactId>
@@ -204,6 +203,12 @@
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
 				<version>1.9</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.shardingsphere</groupId>
+				<artifactId>sharding-jdbc-core</artifactId>
+				<version>4.0.0-RC1</version>
 			</dependency>
 
 		</dependencies>

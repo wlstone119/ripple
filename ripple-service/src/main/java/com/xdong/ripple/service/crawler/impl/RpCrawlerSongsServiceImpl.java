@@ -1,13 +1,19 @@
 package com.xdong.ripple.service.crawler.impl;
 
+import com.xdong.ripple.common.crawler.CrawlerSearchSongVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
 import com.xdong.ripple.dal.mapper.crawler.RpCrawlerSongsDoMapper;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.weidai.mp.support.service.impl.MPServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,21 +25,74 @@ import org.springframework.stereotype.Service;
  * @since 2019-03-20
  */
 @Service
-public class RpCrawlerSongsServiceImpl extends MPServiceImpl<RpCrawlerSongsDoMapper, RpCrawlerSongsDo> implements IRpCrawlerSongsService {
+public class RpCrawlerSongsServiceImpl extends MPServiceImpl<RpCrawlerSongsDoMapper, RpCrawlerSongsDo>
+		implements IRpCrawlerSongsService {
 
-    @Override
-    public List<RpCrawlerSongsDo> searchBykey(String queryKey) {
-        List<RpCrawlerSongsDo> crawlerList = new ArrayList<RpCrawlerSongsDo>();
+	// 一行展示4个
+	private static final int oneLength = 4;
 
-        RpCrawlerSongsDo musicDto1 = this.selectById(29054L);
-        RpCrawlerSongsDo musicDto2 = this.selectById(213483L);
-        RpCrawlerSongsDo musicDto3 = this.selectById(91269L);
+	// css可设置长度
+	private static final int cssLength = 12;
 
-        crawlerList.add(musicDto1);
-        crawlerList.add(musicDto2);
-        crawlerList.add(musicDto3);
+	@Override
+	public Page<CrawlerSearchSongVo> searchBykey(String queryKey, String type, int pageNo, int pageSize) {
 
-        return crawlerList;
-    }
+		Page<CrawlerSearchSongVo> result = new Page<CrawlerSearchSongVo>();
+
+		Page<RpCrawlerSongsDo> page = new Page<RpCrawlerSongsDo>();
+		page.setCurrent(pageNo);
+		page.setSize(pageSize);
+		Wrapper<RpCrawlerSongsDo> wrapper = new EntityWrapper<RpCrawlerSongsDo>();
+		wrapper.eq("resource", type);
+		wrapper.addFilter("(instr(name,{0}) > 0 or instr(song_author,{0}) > 0 or instr(song_album, {0})  > 0)", queryKey);
+
+		Page<RpCrawlerSongsDo> resultPage = this.selectPage(page, wrapper);
+		if (resultPage != null && CollectionUtils.isNotEmpty(resultPage.getRecords())) {
+			result.setCurrent(resultPage.getCurrent());
+			result.setSize(resultPage.getSize());
+			result.setTotal(resultPage.getTotal());
+			result.setRecords(modifyToVo(resultPage.getRecords()));
+		}
+
+		return result;
+	}
+
+	private List<CrawlerSearchSongVo> modifyToVo(List<RpCrawlerSongsDo> records) {
+
+		List<CrawlerSearchSongVo> voList = new ArrayList<CrawlerSearchSongVo>();
+
+		if (CollectionUtils.isNotEmpty(records)) {
+			List<RpCrawlerSongsDo> doList = new ArrayList<RpCrawlerSongsDo>();
+			for (int i = 0; i < records.size(); i++) {
+				doList.add(records.get(i));
+
+				if ((i + 1) % oneLength == 0) {
+					CrawlerSearchSongVo songVo = new CrawlerSearchSongVo();
+					songVo.setCssLength(cssLength / oneLength);
+					songVo.setViewList(copyList(doList));
+					voList.add(songVo);
+
+					doList.clear();
+				} else if ((i+1) == records.size()) {
+					CrawlerSearchSongVo songVo = new CrawlerSearchSongVo();
+					songVo.setCssLength(cssLength / oneLength);
+					songVo.setViewList(copyList(doList));
+					voList.add(songVo);
+				}
+			}
+		}
+
+		return voList;
+	}
+
+	public List<RpCrawlerSongsDo> copyList(List<RpCrawlerSongsDo> doList) {
+		List<RpCrawlerSongsDo> copyResult = new ArrayList<RpCrawlerSongsDo>();
+		for (RpCrawlerSongsDo song : doList) {
+			RpCrawlerSongsDo target = new RpCrawlerSongsDo();
+			BeanUtils.copyProperties(song, target);
+			copyResult.add(target);
+		}
+		return copyResult;
+	}
 
 }

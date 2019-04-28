@@ -1,9 +1,8 @@
 package com.xdong.ripple.spi.crawler;
 
+import com.xdong.ripple.common.crawler.CrawlerSearchSongVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
-
-import java.util.List;
-
+import com.baomidou.mybatisplus.plugins.Page;
 import com.weidai.mp.support.service.IMPService;
 
 /**
@@ -16,6 +15,6 @@ import com.weidai.mp.support.service.IMPService;
  */
 public interface IRpCrawlerSongsService extends IMPService<RpCrawlerSongsDo> {
 
-    List<RpCrawlerSongsDo> searchBykey(String queryKey);
+	Page<CrawlerSearchSongVo> searchBykey(String queryKey, String type, int pageNo, int pageSize);
 
 }
