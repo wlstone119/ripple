@@ -1,22 +1,28 @@
 <script type="text/javascript">
 	$(document).ready(function(){ 
-		var pageNo = 1;
+		var pageNo = parseInt($!pageResult.current);
+		var pages = parseInt($!pageResult.pages);
 		var endPage = 10;
-		var type = "$!type" ;
-		if($!pageResult.current){
-			pageNo = $!pageResult.current;
+		var type = "$!type";
+		
+		if(isNaN(pageNo)){
+			pageNo = 1;
 		}
-		if($!pageResult.pages){
-			if($!pageResult.pages > (pageNo+10)){
-				endPage = pageNo + 10;
-			} else {
-				endPage = (pageNo+10) - $!pageResult.pages;
-			}
-		} 
-		if(!type){
+		if(isNaN(pages)){
+			pages = 20;
+		}
+		
+		if(pages > (pageNo+10)){
+			endPage = pageNo + 10;
+		} else {
+			endPage = (pageNo+10) - pages;
+		}
+		
+		if(type.length == 0){
 			type = "wangyi";
 		}
-		goPage(type, pageNo,endPage);
+		
+		searchHome(type,pageNo);
 	}); 
 
 	function goPage(type, current, endpage){
@@ -32,8 +38,17 @@
 		document.getElementById(type+"-page").innerHTML = tempStr;
 	}
 	
+	function searchHome(type, pageNo){
+		document.getElementById("type").value = type;
+		document.getElementById("pageNo").value = pageNo;
+		document.getElementById("pageSize").value = 20;
+		
+		document.getElementById("searchForm").submit();
+	}
+	
 	function searchPage(obj){
 		var pageNo = 1;
+		
 		if(obj != null){
 			pageNo = obj.innerHTML;
 		}
@@ -97,8 +112,7 @@
 						<input type="text" class="form-control" name="queryKey"
 							placeholder="Search..." value="$!queryKey"></input><span
 							class="input-group-btn">
-							<button type="submit" class="btn btn-primary"
-								onclick="searchList()">Search</button>
+							<button type="submit" class="btn btn-primary">Search</button>
 						</span> <input id="type" type="hidden" name="type" value="$!type" /> <input
 							id="pageNo" type="hidden" name="pageNo"
 							value="$!pageResult.current" /> <input id="pageSize"
@@ -145,12 +159,12 @@
 													<img src="${song.songAlbumPic}" class="img-responsive"
 														alt="Berry Lace Dress">
 													<div>
-														<a href="$!song.songUrl"
+														<a href="$!song.songUrl" target="_blank"
 															class="btn btn-default fancybox-fast-view">$!song.songSheet</a>
 													</div>
 												</div>
 												<h3>
-													<a href="$!song.songUrl">$!song.name</a>
+													<a href="$!song.songUrl" target="_blank">$!song.name</a>
 												</h3>
 												<button type="button" class="btn btn-primary"
 													onclick="radio(${song.id})">

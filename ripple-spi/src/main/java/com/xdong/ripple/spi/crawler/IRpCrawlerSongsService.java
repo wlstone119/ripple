@@ -15,6 +15,8 @@ import com.weidai.mp.support.service.IMPService;
  */
 public interface IRpCrawlerSongsService extends IMPService<RpCrawlerSongsDo> {
 
-	Page<CrawlerSearchSongVo> searchBykey(String queryKey, String type, int pageNo, int pageSize);
+    public Page<CrawlerSearchSongVo> searchBykey(String queryKey, String type, int pageNo, int pageSize);
+
+    public boolean checkSongIdExists(Long songId, String resource);
 
 }

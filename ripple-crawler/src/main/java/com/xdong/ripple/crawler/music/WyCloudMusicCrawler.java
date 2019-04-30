@@ -177,13 +177,21 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
         for (Element song : songs) {
             href = song.getElementsByTag("a").attr("href");
             songUrl = getSongUrlById(href);
+            Long songId = Long.parseLong(href.substring(href.indexOf("=") + 1, href.length()));
+            
+            if (rpSongsServiceImpl.checkSongIdExists(songId, Constant.CRAWLER_RESOURCE_WANGYI)) {
+                continue;
+            }
+
+            // 播放器
+            songDo.setResourcepath(appendIframe(songUrl));
 
             // 歌名
             songDo.setName(song.getElementsByTag("a").html());
             // 歌曲url
             songDo.setSongUrl(songUrl);
-            // 播放器
-            songDo.setResourcepath(appendIframe(songUrl));
+
+            songDo.setSongId(songId);
 
             // 歌曲url获取信息
             Document songDetail = CrawlerUtil.connectUrl(songDo.getSongUrl());
@@ -264,12 +272,12 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
             }
         }
     }
-    
+
     private void loopTable(Element ele) {
         Elements elements = ele.children();
-        for(Element ele2 : elements) {
-            
+        for (Element ele2 : elements) {
+
         }
-        
+
     }
 }

@@ -100,6 +100,11 @@ public class RpCrawlerSongsDo extends Model<RpCrawlerSongsDo> {
      * 来源
      */
     private String resource;
+    
+    /**
+     * 外网歌曲id
+     */
+    private Long songId;
 
 
     public Long getId() {
@@ -237,6 +242,14 @@ public class RpCrawlerSongsDo extends Model<RpCrawlerSongsDo> {
     public void setResource(String resource) {
         this.resource = resource;
     }
+    
+    public Long getSongId() {
+        return songId;
+    }
+    
+    public void setSongId(Long songId) {
+        this.songId = songId;
+    }
 
     @Override
     protected Serializable pkVal() {
@@ -263,6 +276,7 @@ public class RpCrawlerSongsDo extends Model<RpCrawlerSongsDo> {
         ", songSheet=" + songSheet +
         ", sort=" + sort +
         ", resource=" + resource +
+        ", songId=" + songId +
         "}";
     }
 }
