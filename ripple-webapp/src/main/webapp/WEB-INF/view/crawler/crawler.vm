@@ -23,6 +23,22 @@
 <script type="text/javascript"
 	src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script type="text/javascript">
+	$(document).ready(function(){ 
+		$.ajax({
+				url : "/ripple/crawler/tableList",
+				type : "get",
+				dataType : "json",
+				data : {
+				},
+				success : function(result) {
+					$("#webroot").html("");
+					$.each(result, function(i, v) {
+						$("#webroot").append("<option value="+v.id+">" + v.name + "</option>");
+					});
+				}
+			});
+	}); 
+	
 	$(function() {
 		$("#crawl").click(function() {
 			$("#sr").html("");
@@ -86,11 +102,7 @@
 					<h2>爬虫</h2>
 					<form role="form">
 						<select id="webroot" class="form-control">
-							<option value="1">百度-百度音乐-安静</option>
-							<option value="3">新浪-财经新闻</option>
-							<option value="5">网易-网易云音乐-民谣</option>
-							<option value="6">网易-网易云音乐-安静</option>
-							<option value="7">网易-网易云音乐-流行</option>
+							
 						</select>
 						<button id="crawl" class="btn btn-default btn-sm">抓取</button>
 						<button id="index" class="btn btn-primary btn-sm">索引</button>

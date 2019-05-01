@@ -1,9 +1,11 @@
 package com.xdong.ripple.mvc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +27,9 @@ import com.xdong.ripple.commonservice.annotation.Log;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyClient;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
+import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
+import com.xdong.ripple.spi.crawler.IRpCrawlerUrlService;
 
 @Controller
 @RequestMapping("/crawler")
@@ -37,6 +41,9 @@ public class CrawlerController extends BaseController {
 
     @Autowired
     private IRpCrawlerSongsService rpCrawlerSongsServiceImpl;
+
+    @Autowired
+    private IRpCrawlerUrlService   rpCrawlerUrlServiceImpl;
 
     @Autowired
     private CrawlerStrategyClient  crawlerStrategyClient;
@@ -79,6 +86,19 @@ public class CrawlerController extends BaseController {
         Page<CrawlerSearchSongVo> pageResult = rpCrawlerSongsServiceImpl.searchBykey(queryKey, type, pageNo, pageSize);
 
         return getResult(pageResult);
+    }
+
+    @RequestMapping("/tableList")
+    @ResponseBody
+    public List<RpCrawlerUrlDo> getTableList(HttpServletRequest request) {
+        List<RpCrawlerUrlDo> urlList = new ArrayList<RpCrawlerUrlDo>();
+        Cookie[] cookies  = request.getCookies();
+        for(Cookie var : cookies) {
+            if("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue())) {
+                urlList = rpCrawlerUrlServiceImpl.selectList(new EntityWrapper<RpCrawlerUrlDo>());
+            }
+        }
+        return urlList;
     }
 
     @RequestMapping("/list")
