@@ -10,12 +10,12 @@
           </a>
         </li>
         <li class="dropdown dropdown-megamenu">
-          <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+          <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="/crawler/index">
             音乐
           </a>
         </li>
         <li class="dropdown active">
-          <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+          <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="/blog">
             博客 
           </a>
         </li>
