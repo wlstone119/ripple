@@ -3,6 +3,7 @@
 <html>
 #parse("/layout/newcommon/header.vm")
 <body>
+	#parse("/layout/newcommon/menu.vm")
 	$screen_content
 	#parse("/layout/newcommon/foot.vm")
 </body>
