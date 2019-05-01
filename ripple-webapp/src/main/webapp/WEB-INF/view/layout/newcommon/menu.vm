@@ -1,21 +1,21 @@
 <div class="header">
   <div class="container">
-    <a class="site-logo" href="/crawler/index"><img src="/static/img/ripple_music.png" alt="Ripple Music"></a>
+    <a class="site-logo" href="/ripple/crawler/index"><img src="/ripple/static/img/ripple_music.png" alt="Ripple Music"></a>
     <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
     <div class="header-navigation font-transform-inherit" style="font-size:25px;">
       <ul>
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="/crawler/index">
+        <li class="dropdown active">
+          <a href="/ripple/crawler/index">
             首页 
           </a>
         </li>
         <li class="dropdown dropdown-megamenu">
-          <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="/crawler/index">
+          <a href=""/ripple/crawler/index">
             音乐
           </a>
         </li>
-        <li class="dropdown active">
-          <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="/blog">
+        <li class="dropdown">
+          <a href="/blog">
             博客 
           </a>
         </li>

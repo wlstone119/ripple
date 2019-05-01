@@ -29,7 +29,7 @@
 			$("#crawl").attr("disabled", true);
 			var webroot = $("#webroot").val();
 			$.ajax({
-				url : "/crawler/crawl",
+				url : "/ripple/crawler/crawl",
 				type : "post",
 				dataType : "json",
 				data : {
@@ -49,7 +49,7 @@
 		});
 
 		$("#index").click(function() {
-			$.post("/controller/index", {
+			$.post("/crawler/index", {
 				create : true
 			}, function(result) {
 				$("#status").html("索引操作:" + result);
@@ -62,7 +62,7 @@
 				return;
 			}
 			$.ajax({
-				url : "/controller/serach",
+				url : "/crawler/serach",
 				type : "post",
 				dataType : "json",
 				data : {

@@ -92,19 +92,19 @@
 
 		<Logger
 			name="org.apache.ibatis.logging"
-			additivity="false" level="DEBUG">
+			additivity="false" level="info">
 			<appender-ref ref="console" />
 		</Logger>
 		
 		<Logger
 			name="com.baomidou.mybatisplus.mapper"
-			additivity="false" level="DEBUG">
+			additivity="false" level="info">
 			<appender-ref ref="console" />
 		</Logger>
 		
 		<Logger
 			name="com.xdong.ripple.dal.mapper"
-			additivity="false" level="DEBUG">
+			additivity="false" level="info">
 			<appender-ref ref="console" />
 		</Logger>
 

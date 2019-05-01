@@ -140,6 +140,10 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
                             loopSong(var, songDo);
                         }
 
+                        if (rpSongsServiceImpl.checkSongIdExists(songDo.getSongId(), Constant.CRAWLER_RESOURCE_BAIDU)) {
+                            continue;
+                        }
+
                         rpSongsServiceImpl.insert(songDo);
                     }
                 }
@@ -187,6 +191,9 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
                 songUrl = appendUrl(songUrl);
             }
             songDo.setSongUrl(songUrl);
+
+            Long songId = getSongIdByUrl(songUrl);
+            songDo.setSongId(songId);
         } else if (var.hasClass("songlist-album")) {
             if (!var.children().isEmpty()) {
                 Element singerHref = var.child(0);
@@ -210,6 +217,10 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
                 }
             }
         }
+    }
+
+    private Long getSongIdByUrl(String songUrl) {
+        return Long.parseLong(songUrl.substring(songUrl.lastIndexOf("/") + 1, songUrl.length()));
     }
 
     private Document connectUrl(String url) throws IOException {
