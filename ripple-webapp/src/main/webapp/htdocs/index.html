@@ -1,39 +1,73 @@
 <script type="text/javascript">
 	$(document).ready(function(){ 
-		var pageNo = 1;
+		var pageNo = parseInt($!pageResult.current);
+		var pages = parseInt($!pageResult.pages);
 		var endPage = 10;
-		var type = "$!type" ;
-		if($!pageResult.current){
-			pageNo = $!pageResult.current;
+		var type = "$!type";
+		
+		if(isNaN(pageNo)){
+			pageNo = 1;
 		}
-		if($!pageResult.pages){
-			if($!pageResult.pages > (pageNo+10)){
-				endPage = pageNo + 10;
-			} else {
-				endPage = (pageNo+10) - $!pageResult.pages;
-			}
-		} 
-		if(!type){
+		if(isNaN(pages)){
+			pages = 20;
+		}
+		
+		if(pages > (pageNo+10)){
+			endPage = pageNo + 10;
+		} else {
+			endPage = (pageNo+10) - pages;
+		}
+		
+		if(type.length == 0){
 			type = "wangyi";
 		}
-		goPage(type, pageNo,endPage);
+		
+		goPage(type, pageNo, endPage);
 	}); 
-
+	
 	function goPage(type, current, endpage){
 		var tempStr = "<li><a href='javascript:;' onclick='goUpPage();'>«</a></li>";
-		for(var i=current; i <= endpage; i++){
-			if(i == current){
-				tempStr += '<li><span id="wangyispancurrent">'+i+'</span></li>'; 
-			} else {
-				tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
+		if(endpage > 15){
+			for(var i = 1; i <= endpage; i++){
+				if(i == 1){
+					if(i == current){
+						tempStr += '<li><span id="spancurrent">'+i+'</span></li>';
+						tempStr += '<li><a href="javascript:;">...</a></li>'; 
+					} else {
+						tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
+					}
+				}  else if(i == current){
+					tempStr += '<li><span id="spancurrent">'+i+'</span></li>';	
+				} else {
+					tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
+				}
+			}
+		} else {
+			for(var i = 1; i <= endpage; i++){
+				if(i == current){
+					tempStr += '<li><span id="spancurrent">'+i+'</span></li>';
+				} else {
+					tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
+				}
 			}
 		}
+		
 		tempStr += "<li><a href='javascript:;' onclick='goNextPage()'>»</a></li>";
+		
 		document.getElementById(type+"-page").innerHTML = tempStr;
+	}
+	
+	function searchHome(type, pageNo){
+		document.getElementById("type").value = type;
+		document.getElementById("pageNo").value = pageNo;
+		document.getElementById("pageSize").value = 20;
+		
+		document.getElementById("searchForm").submit();
 	}
 	
 	function searchPage(obj){
 		var pageNo = 1;
+		
 		if(obj != null){
 			pageNo = obj.innerHTML;
 		}
@@ -47,16 +81,23 @@
 	}
 	
 	function goUpPage(){
-		var current = document.getElementById("wangyispancurrent").innerHTML;
+		var current = document.getElementById("spancurrent").innerHTML;
+		if(current.indexOf("font") != -1){
+			current = current.substring(current.length-15,current.length-14); 
+		}
 		var start = current;
-		if(current-10 < 0 ){
+		if(start - 9 < 0){
 			start = 1;
 		}
-		goPage(start, start+9); 
+		var type = document.getElementById("type").value;
+		goPage(type, start,current); 
 	}
 	
 	function goNextPage(){
-		var current = document.getElementById("wangyispancurrent").innerHTML;
+		var current = document.getElementById("spancurrent").innerHTML;
+		if(current.indexOf("font") != -1){
+			current = current.substring(current.length-15,current.length-14); 
+		}
 		goPage(current, parseInt(current)+9); 
 	}
 	
@@ -85,14 +126,13 @@
 		<!-- BEGIN CONTENT -->
 		<div class="col-md-12">
 			<div class="content-page">
-				<form id="searchForm" action="/crawler/index"
+				<form id="searchForm" method="post" action="/crawler/index"
 					class="content-search-view2">
 					<div class="input-group">
 						<input type="text" class="form-control" name="queryKey"
 							placeholder="Search..." value="$!queryKey"></input><span
 							class="input-group-btn">
-							<button type="submit" class="btn btn-primary"
-								onclick="searchList()">Search</button>
+							<button type="submit" class="btn btn-primary">Search</button>
 						</span> <input id="type" type="hidden" name="type" value="$!type" /> <input
 							id="pageNo" type="hidden" name="pageNo"
 							value="$!pageResult.current" /> <input id="pageSize"
@@ -130,7 +170,8 @@
 							</ul>
 							<div class="tab-content">
 								<div class="tab-pane row fade in active" id="tab-1">
-									#foreach($rowRecord in $pageResult.records)
+									#if($!pageResult.records) #foreach($rowRecord in
+									$!pageResult.records)
 									<div class="row product-list">
 										#foreach($song in $rowRecord.viewList)
 										<div class="col-md-$!rowRecord.cssLength col-sm-6 col-xs-12">
@@ -139,12 +180,12 @@
 													<img src="${song.songAlbumPic}" class="img-responsive"
 														alt="Berry Lace Dress">
 													<div>
-														<a href="$!song.songUrl"
+														<a href="$!song.songUrl" target="_blank"
 															class="btn btn-default fancybox-fast-view">$!song.songSheet</a>
 													</div>
 												</div>
 												<h3>
-													<a href="$!song.songUrl">$!song.name</a>
+													<a href="$!song.songUrl" target="_blank">$!song.name</a>
 												</h3>
 												<button type="button" class="btn btn-primary"
 													onclick="radio(${song.id})">
@@ -163,6 +204,11 @@
 											</ul>
 										</div>
 									</div>
+									#else
+									<div class="tab-pane fade">
+										<p>未查询到相关信息</p>
+									</div>
+									#end
 								</div>
 								<div class="tab-pane row fade" id="tab-2">
 									#foreach($rowRecord in $pageResult.records)

@@ -12,38 +12,50 @@
 			pages = 20;
 		}
 		
-		if(pages > (pageNo+10)){
-			endPage = pageNo + 10;
-		} else {
-			endPage = (pageNo+10) - pages;
-		}
-		
 		if(type.length == 0){
 			type = "wangyi";
 		}
 		
-		searchHome(type,pageNo);
+		document.getElementById("type").value = type;
+		if(endPage > pages){
+			endPage = pages;
+		} else {
+			endPage = pageNo + 1;
+		}
+		
+		goPage(type, pageNo, endPage);
 	}); 
-
+	
 	function goPage(type, current, endpage){
 		var tempStr = "<li><a href='javascript:;' onclick='goUpPage();'>«</a></li>";
-		for(var i=current; i <= endpage; i++){
-			if(i == current){
-				tempStr += '<li><span id="wangyispancurrent">'+i+'</span></li>'; 
-			} else {
-				tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
+		if(endpage > 15){
+			for(var i = 1; i <= endpage; i++){
+				if(i == 1){
+					if(i == current){
+						tempStr += '<li><span id="spancurrent">'+i+'</span></li>';
+						tempStr += '<li><a href="javascript:;">...</a></li>'; 
+					} else {
+						tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
+					}
+				}  else if(i == current){
+					tempStr += '<li><span id="spancurrent">'+i+'</span></li>';	
+				} else {
+					tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
+				}
+			}
+		} else {
+			for(var i = 1; i <= endpage; i++){
+				if(i == current){
+					tempStr += '<li><span id="spancurrent">'+i+'</span></li>';
+				} else {
+					tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
+				}
 			}
 		}
-		tempStr += "<li><a href='javascript:;' onclick='goNextPage()'>»</a></li>";
-		document.getElementById(type+"-page").innerHTML = tempStr;
-	}
-	
-	function searchHome(type, pageNo){
-		document.getElementById("type").value = type;
-		document.getElementById("pageNo").value = pageNo;
-		document.getElementById("pageSize").value = 20;
 		
-		document.getElementById("searchForm").submit();
+		tempStr += "<li><a href='javascript:;' onclick='goNextPage()'>»</a></li>";
+		
+		document.getElementById(type+"-page").innerHTML = tempStr;
 	}
 	
 	function searchPage(obj){
@@ -62,23 +74,52 @@
 	}
 	
 	function goUpPage(){
-		var current = document.getElementById("wangyispancurrent").innerHTML;
+		var current = document.getElementById("spancurrent").innerHTML;
 		if(current.indexOf("font") != -1){
 			current = current.substring(current.length-15,current.length-14); 
 		}
-		var start = current;
-		if(current-10 < 0 ){
-			start = 1;
+		
+		if(current == 1){
+			return;
 		}
-		goPage(start, start+9); 
+		
+		var type = "$!type";
+		if(type.length == 0){
+			type = "wangyi";
+		}
+		
+		document.getElementById("type").value = type;
+		document.getElementById("pageNo").value = current - 1;
+		document.getElementById("pageSize").value = 20;
+		
+		document.getElementById("searchForm").submit();
 	}
 	
 	function goNextPage(){
-		var current = document.getElementById("wangyispancurrent").innerHTML;
+		var current = document.getElementById("spancurrent").innerHTML;
 		if(current.indexOf("font") != -1){
 			current = current.substring(current.length-15,current.length-14); 
 		}
-		goPage(current, parseInt(current)+9); 
+		
+		
+		var pages = parseInt($!pageResult.pages);
+		if(current == pages){
+			return;
+		}
+		if(current + 1 > pages){
+			return;
+		}
+		
+		var type = "$!type";
+		if(type.length == 0){
+			type = "wangyi";
+		}
+		document.getElementById("type").value = type;
+		document.getElementById("pageNo").value = current + 1;
+		document.getElementById("pageSize").value = 20;
+		
+		document.getElementById("searchForm").submit();
+		
 	}
 	
 </script>
@@ -106,7 +147,7 @@
 		<!-- BEGIN CONTENT -->
 		<div class="col-md-12">
 			<div class="content-page">
-				<form id="searchForm" action="/crawler/index"
+				<form id="searchForm" method="post" action="/crawler/index"
 					class="content-search-view2">
 					<div class="input-group">
 						<input type="text" class="form-control" name="queryKey"
@@ -150,7 +191,8 @@
 							</ul>
 							<div class="tab-content">
 								<div class="tab-pane row fade in active" id="tab-1">
-									#foreach($rowRecord in $pageResult.records)
+									#if($!pageResult.records) #foreach($rowRecord in
+									$!pageResult.records)
 									<div class="row product-list">
 										#foreach($song in $rowRecord.viewList)
 										<div class="col-md-$!rowRecord.cssLength col-sm-6 col-xs-12">
@@ -183,6 +225,11 @@
 											</ul>
 										</div>
 									</div>
+									#else
+									<div class="tab-pane fade">
+										<p>未查询到相关信息</p>
+									</div>
+									#end
 								</div>
 								<div class="tab-pane row fade" id="tab-2">
 									#foreach($rowRecord in $pageResult.records)
