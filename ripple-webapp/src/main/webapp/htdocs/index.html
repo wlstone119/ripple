@@ -1,285 +1,113 @@
-<script type="text/javascript">
-	$(document).ready(function(){ 
-		var pageNo = parseInt($!pageResult.current);
-		var pages = parseInt($!pageResult.pages);
-		var endPage = 10;
-		var type = "$!type";
-		
-		if(isNaN(pageNo)){
-			pageNo = 1;
-		}
-		if(isNaN(pages)){
-			pages = 20;
-		}
-		
-		if(pages > (pageNo+10)){
-			endPage = pageNo + 10;
-		} else {
-			endPage = (pageNo+10) - pages;
-		}
-		
-		if(type.length == 0){
-			type = "wangyi";
-		}
-		
-		goPage(type, pageNo, endPage);
-	}); 
-	
-	function goPage(type, current, endpage){
-		var tempStr = "<li><a href='javascript:;' onclick='goUpPage();'>«</a></li>";
-		if(endpage > 15){
-			for(var i = 1; i <= endpage; i++){
-				if(i == 1){
-					if(i == current){
-						tempStr += '<li><span id="spancurrent">'+i+'</span></li>';
-						tempStr += '<li><a href="javascript:;">...</a></li>'; 
-					} else {
-						tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
-					}
-				}  else if(i == current){
-					tempStr += '<li><span id="spancurrent">'+i+'</span></li>';	
-				} else {
-					tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
-				}
-			}
-		} else {
-			for(var i = 1; i <= endpage; i++){
-				if(i == current){
-					tempStr += '<li><span id="spancurrent">'+i+'</span></li>';
-				} else {
-					tempStr += '<li><a href="javascript:;" onclick="searchPage(this)" >'+i+'</a></li>';
-				}
-			}
-		}
-		
-		tempStr += "<li><a href='javascript:;' onclick='goNextPage()'>»</a></li>";
-		
-		document.getElementById(type+"-page").innerHTML = tempStr;
-	}
-	
-	function searchHome(type, pageNo){
-		document.getElementById("type").value = type;
-		document.getElementById("pageNo").value = pageNo;
-		document.getElementById("pageSize").value = 20;
-		
-		document.getElementById("searchForm").submit();
-	}
-	
-	function searchPage(obj){
-		var pageNo = 1;
-		
-		if(obj != null){
-			pageNo = obj.innerHTML;
-		}
-		if(pageNo.indexOf("font") != -1){
-			pageNo = pageNo.substring(pageNo.length-15,pageNo.length-14); 
-		}
-		 
-		document.getElementById("pageNo").value = pageNo;
-		document.getElementById("pageSize").value = 20;
-		document.getElementById("searchForm").submit();
-	}
-	
-	function goUpPage(){
-		var current = document.getElementById("spancurrent").innerHTML;
-		if(current.indexOf("font") != -1){
-			current = current.substring(current.length-15,current.length-14); 
-		}
-		var start = current;
-		if(start - 9 < 0){
-			start = 1;
-		}
-		var type = document.getElementById("type").value;
-		goPage(type, start,current); 
-	}
-	
-	function goNextPage(){
-		var current = document.getElementById("spancurrent").innerHTML;
-		if(current.indexOf("font") != -1){
-			current = current.substring(current.length-15,current.length-14); 
-		}
-		goPage(current, parseInt(current)+9); 
-	}
-	
-</script>
 
-<style>
-.xuanfu {
-	left: 0;
-	position: fixed;
-	bottom: 0; //
-	这里换成top: 0;
-	就悬浮在头部 width: 100%;
-	z-index: 100;
-}
-</style>
-<div id="radio" class="xuanfu" width="1000" height="100"></div>
-
-<div class="container">
-	<ul class="breadcrumb">
-		<li><a href="index.html">搜索</a></li>
-		<li><a href="javascript:;">爬虫搜索</a></li>
-		<li class="active">搜索列表</li>
-	</ul>
-	<!-- BEGIN SIDEBAR & CONTENT -->
-	<div class="row margin-bottom-40">
-		<!-- BEGIN CONTENT -->
-		<div class="col-md-12">
-			<div class="content-page">
-				<form id="searchForm" method="post" action="/crawler/index"
-					class="content-search-view2">
-					<div class="input-group">
-						<input type="text" class="form-control" name="queryKey"
-							placeholder="Search..." value="$!queryKey"></input><span
-							class="input-group-btn">
-							<button type="submit" class="btn btn-primary">Search</button>
-						</span> <input id="type" type="hidden" name="type" value="$!type" /> <input
-							id="pageNo" type="hidden" name="pageNo"
-							value="$!pageResult.current" /> <input id="pageSize"
-							type="hidden" name="pageSize" value="$!pageResult.size" /> <input
-							id="pages" type="hidden" name="pages" value="$!pageResult.pages" />
-					</div>
-					<br> <br>
-					<div>搜索结果如下：</div>
-					<br> <br>
-					<div class="row mix-block margin-bottom-40">
-						<!-- TABS -->
-						<div class="col-md-12 tab-style-1">
-							<ul class="nav nav-tabs">
-								#if($!type)
-								<li #if($!type== "wangyi") class="active" #end><a
-									href="#tab-1" data-toggle="tab"
-									onclick='chooseSearchPage("wangyi",1)'>网易云音乐</a></li>
-								<li #if($!type== "baidu") class="active" #end><a
-									href="#tab-2" data-toggle="tab"
-									onclick="chooseSearchPage('baidu',1)">百度音乐</a></li>
-								<li #if($!type== "xiami") class="active" #end><a
-									href="#tab-3" data-toggle="tab"
-									onclick="chooseSearchPage('xiami',1)">虾米音乐</a></li>
-								<li #if($!type== "qq") class="active" #end><a href="#tab-4"
-									data-toggle="tab" onclick="chooseSearchPage('qq',1)">QQ音乐</a></li>
-								#else
-								<li class="active"><a href="#tab-1" data-toggle="tab"
-									onclick="chooseSearchPage('wangyi',1)">网易云音乐</a></li>
-								<li><a href="#tab-2" data-toggle="tab"
-									onclick="chooseSearchPage('baidu',1)">百度音乐</a></li>
-								<li><a href="#tab-3" data-toggle="tab"
-									onclick="chooseSearchPage('xiami',1)">虾米音乐</a></li>
-								<li><a href="#tab-4" data-toggle="tab"
-									onclick="chooseSearchPage('qq',1)">QQ音乐</a></li> #end
-							</ul>
-							<div class="tab-content">
-								<div class="tab-pane row fade in active" id="tab-1">
-									#if($!pageResult.records) #foreach($rowRecord in
-									$!pageResult.records)
-									<div class="row product-list">
-										#foreach($song in $rowRecord.viewList)
-										<div class="col-md-$!rowRecord.cssLength col-sm-6 col-xs-12">
-											<div class="product-item">
-												<div class="pi-img-wrapper">
-													<img src="${song.songAlbumPic}" class="img-responsive"
-														alt="Berry Lace Dress">
-													<div>
-														<a href="$!song.songUrl" target="_blank"
-															class="btn btn-default fancybox-fast-view">$!song.songSheet</a>
-													</div>
-												</div>
-												<h3>
-													<a href="$!song.songUrl" target="_blank">$!song.name</a>
-												</h3>
-												<button type="button" class="btn btn-primary"
-													onclick="radio(${song.id})">
-													<font style="vertical-align: inherit;"><font
-														style="vertical-align: inherit;">在线收听</font></font>
-												</button>
-											</div>
-										</div>
-										#end
-									</div>
-									#end
-									<div class="row">
-										<div class="col-md-12 col-sm-12" align="center">
-											<ul id="wangyi-page" class="pagination">
-
-											</ul>
-										</div>
-									</div>
-									#else
-									<div class="tab-pane fade">
-										<p>未查询到相关信息</p>
-									</div>
-									#end
-								</div>
-								<div class="tab-pane row fade" id="tab-2">
-									#foreach($rowRecord in $pageResult.records)
-									<div class="row product-list">
-										#foreach($song in $rowRecord.viewList)
-										<div class="col-md-$!rowRecord.cssLength col-sm-6 col-xs-12">
-											<div class="product-item">
-												<div class="pi-img-wrapper">
-													<img src="${song.songAlbumPic}" class="img-responsive"
-														alt="Berry Lace Dress">
-													<div>
-														<a href="$!song.songUrl"
-															class="btn btn-default fancybox-fast-view">$!song.songSheet</a>
-													</div>
-												</div>
-												<h3>
-													<a href="$!song.songUrl">$!song.name</a>
-												</h3>
-												<button type="button" class="btn btn-primary"
-													onclick="radio(${song.id})">
-													<font style="vertical-align: inherit;"><font
-														style="vertical-align: inherit;">在线收听</font></font>
-												</button>
-											</div>
-										</div>
-										#end
-									</div>
-									#end
-									<div class="row">
-										<div class="col-md-12 col-sm-12" align="center">
-											<ul id="baidu-page" class="pagination">
-
-											</ul>
-										</div>
-									</div>
-								</div>
-								<div class="tab-pane fade" id="tab-3">
-									<p>暂未开放</p>
-								</div>
-								<div class="tab-pane fade" id="tab-4">
-									<p>暂未开放</p>
-								</div>
-							</div>
-						</div>
-						<!-- END TABS -->
-					</div>
-				</form>
+<div class="pre-footer">
+	<div class="container">
+		<div class="row">
+			<!-- BEGIN BOTTOM ABOUT BLOCK -->
+			<div class="col-md-3 col-sm-6 pre-footer-col">
+				<h2>关于我们</h2>
+				<p>本网站旨在学习交流，网站资源均来源于互联网，如发现有侵权请告知删除。</p>
 			</div>
+			<!-- END BOTTOM ABOUT BLOCK -->
+			<!-- BEGIN BOTTOM INFO BLOCK -->
+			<div class="col-md-3 col-sm-6 pre-footer-col">
+				<h2>网站资源</h2>
+				<ul class="list-unstyled">
+					<li><i class="fa fa-angle-right"></i> <a href="javascript:;">1、爬取数据</a></li>
+					<li><i class="fa fa-angle-right"></i> <a href="javascript:;">2、提供用户实时搜索</a></li>
+					<li><i class="fa fa-angle-right"></i> <a href="javascript:;">3、免去资源搜索切换平台的烦恼</a></li>
+				</ul>
+			</div>
+			<!-- END INFO BLOCK -->
+
+			<!-- BEGIN BOTTOM CONTACTS -->
+			<div class="col-md-3 col-sm-6 pre-footer-col">
+				<h2>联系我们</h2>
+				<address class="margin-bottom-40">
+					Email: <a href="javascript:;">wl_stone@aliyun.com</a><br>
+				</address>
+			</div>
+			<!-- END BOTTOM CONTACTS -->
 		</div>
-		<!-- END CONTENT -->
+		<hr>
 	</div>
 </div>
-<script type="text/javascript">
-	function chooseSearchPage(type, pageNo){
-		document.getElementById("type").value = type;
-		document.getElementById("pageNo").value = pageNo;
-		document.getElementById("pageSize").value = 20;
-		document.getElementById("searchForm").submit();
-	}
-	function radio(id){
-		$.ajax({
-				url : "/crawler/songData",
-				type : "get",
-				dataType : "json",
-				data : {
-					songId : id,
-				},
-				success : function(result) {
-					$("#radio").html("");
-					$("#radio").html(result.resourcepath);
-				}
-			});
-	}
-</script>
+<!-- END PRE-FOOTER -->
+
+<!-- BEGIN FOOTER -->
+<div class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-sm-6 padding-top-10">Copyright 2019 © xdong.cn.</div>
+			<div class="col-md-3 col-sm-6 padding-top-10">浙ICP备18015886号-1.</div>
+			<div class="col-md-3 col-sm-6 padding-top-10"><img src="http://www.beian.gov.cn/img/ghs.png" />浙公网安备 33010602009251号.</div>
+		</div>
+	</div>
+</div>
+<!-- END FOOTER -->
+
+<!-- BEGIN fast view of a product -->
+<div id="product-pop-up" style="display: none; width: 700px;">
+	<div class="product-page product-pop-up">
+		<div class="row">
+			<div class="col-md-6 col-sm-6 col-xs-3">
+				<div class="product-main-image">
+					<img src="/static/assets/frontend/pages/img/products/model7.jpg"
+						alt="Cool green dress with red bell" class="img-responsive">
+				</div>
+				<div class="product-other-images">
+					<a href="javascript:;" class="active"><img
+						alt="Berry Lace Dress"
+						src="/static/assets/frontend/pages/img/products/model3.jpg"></a>
+					<a href="javascript:;"><img alt="Berry Lace Dress"
+						src="/static/assets/frontend/pages/img/products/model4.jpg"></a>
+					<a href="javascript:;"><img alt="Berry Lace Dress"
+						src="/static/assets/frontend/pages/img/products/model5.jpg"></a>
+				</div>
+			</div>
+			<div class="col-md-6 col-sm-6 col-xs-9">
+				<h2>Cool green dress with red bell</h2>
+				<div class="price-availability-block clearfix">
+					<div class="price">
+						<strong><span>$</span>47.00</strong> <em>$<span>62.00</span></em>
+					</div>
+					<div class="availability">
+						Availability: <strong>In Stock</strong>
+					</div>
+				</div>
+				<div class="description">
+					<p>Lorem ipsum dolor ut sit ame dolore adipiscing elit, sed
+						nonumy nibh sed euismod laoreet dolore magna aliquarm erat
+						volutpat Nostrud duis molestie at dolore.</p>
+				</div>
+				<div class="product-page-options">
+					<div class="pull-left">
+						<label class="control-label">Size:</label> <select
+							class="form-control input-sm">
+							<option>L</option>
+							<option>M</option>
+							<option>XL</option>
+						</select>
+					</div>
+					<div class="pull-left">
+						<label class="control-label">Color:</label> <select
+							class="form-control input-sm">
+							<option>Red</option>
+							<option>Blue</option>
+							<option>Black</option>
+						</select>
+					</div>
+				</div>
+				<div class="product-page-cart">
+					<div class="product-quantity">
+						<input id="product-quantity" type="text" value="1" readonly
+							name="product-quantity" class="form-control input-sm">
+					</div>
+					<button class="btn btn-primary" type="submit">Add to cart</button>
+					<a href="shop-item.html" class="btn btn-default">More details</a>
+				</div>
+			</div>
+
+			<div class="sticker sticker-sale"></div>
+		</div>
+	</div>
+</div>
