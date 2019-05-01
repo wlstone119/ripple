@@ -41,6 +41,7 @@ public class CrawlerController extends BaseController {
     @Autowired
     private CrawlerStrategyClient  crawlerStrategyClient;
 
+    @Log("音乐搜索")
     @RequestMapping("/index")
     @ResponseBody
     public ModelAndView index(HttpServletRequest request, String queryKey, String type, Integer pageNo,
