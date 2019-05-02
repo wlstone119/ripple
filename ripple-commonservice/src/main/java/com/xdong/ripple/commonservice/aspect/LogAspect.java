@@ -24,11 +24,11 @@ import com.xdong.ripple.spi.system.IRpSysLogService;
 @Aspect
 @Component
 public class LogAspect {
-    
-    private final Logger        logger = LoggerFactory.getLogger(this.getClass());
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    IRpSysLogService            rpSysLogServiceImpl;
+    IRpSysLogService     rpSysLogServiceImpl;
 
     @Pointcut("@annotation(com.xdong.ripple.commonservice.annotation.Log)")
     public void logPointCut() {
@@ -66,21 +66,23 @@ public class LogAspect {
         sysLog.setMethod(className + "." + methodName + "()");
         // 请求的参数
         Object[] args = joinPoint.getArgs();
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+
         try {
             String params = JSON.toJSONString(args);
             sysLog.setParams(params);
         } catch (Exception e) {
+            sysLog.setParams(request.getRequestURI() + "--" + JSON.toJSONString(request.getParameterMap()));
             logger.error("获取参数异常", e);
         }
 
         // 获取request
-        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
 
         // 设置IP地址
         sysLog.setIp(IPUtils.getIpAddr(request));
-        
+
         // 用户名
-        
+
         sysLog.setTime((int) time);
 
         // 系统当前时间
