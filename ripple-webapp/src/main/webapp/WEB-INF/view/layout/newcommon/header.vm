@@ -70,11 +70,11 @@
     <script type="text/javascript">
         jQuery(document).ready(function() {
             Layout.init();    
-            Layout.initOWL();
-            LayersliderInit.initLayerSlider();
-            Layout.initImageZoom();
-            Layout.initTouchspin();
-            Layout.initTwitter();
+            //Layout.initOWL();
+            //LayersliderInit.initLayerSlider();
+            //Layout.initImageZoom();
+            //Layout.initTouchspin();
+            //Layout.initTwitter();
         });
     </script>
     <!-- END PAGE LEVEL JAVASCRIPTS -->

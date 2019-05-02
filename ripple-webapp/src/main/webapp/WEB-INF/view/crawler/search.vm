@@ -8,22 +8,22 @@
 		if(isNaN(pageNo)){
 			pageNo = 1;
 		}
-		if(isNaN(pages)){
-			pages = 20;
+		
+		if(!isNaN(pages)){
+			if(type.length == 0){
+				type = "wangyi";
+			}
+			
+			document.getElementById("type").value = type;
+			if(endPage > pages){
+				endPage = pages;
+			} else {
+				endPage = pageNo + 1;
+			}
+			
+			goPage(type, pageNo, endPage);
 		}
 		
-		if(type.length == 0){
-			type = "wangyi";
-		}
-		
-		document.getElementById("type").value = type;
-		if(endPage > pages){
-			endPage = pages;
-		} else {
-			endPage = pageNo + 1;
-		}
-		
-		goPage(type, pageNo, endPage);
 	}); 
 	
 	function goPage(type, current, endpage){
@@ -54,7 +54,6 @@
 		}
 		
 		tempStr += "<li><a href='javascript:;' onclick='goNextPage()'>»</a></li>";
-		
 		document.getElementById(type+"-page").innerHTML = tempStr;
 	}
 	
@@ -190,96 +189,152 @@
 									onclick="chooseSearchPage('qq',1)">QQ音乐</a></li> #end
 							</ul>
 							<div class="tab-content">
-								<div class="tab-pane row fade in active" id="tab-1">
-									#if($!pageResult.records) #foreach($rowRecord in
-									$!pageResult.records)
-									<div class="row product-list">
-										#foreach($song in $rowRecord.viewList)
-										<div class="col-md-$!rowRecord.cssLength col-sm-6 col-xs-12">
-											<div class="product-item">
-												<div class="pi-img-wrapper">
-													<img src="${song.songAlbumPic}" class="img-responsive"
-														alt="Berry Lace Dress">
-													<div>
-														<a href="$!song.songUrl" target="_blank"
-															class="btn btn-default fancybox-fast-view">$!song.songSheet</a>
+								<div class="tab-pane row fade #if($!type== "wangyi") in active #end" id="tab-1">
+								 #if($pageResult.records) 
+									 	#if($pageResult.records.size() == 0)
+										 	<div class="col-md-12 testimonials-v1">
+							                  <div id="myCarousel1" class="carousel slide">
+							                    <div class="carousel-inner">
+							                      <div class="active item">
+							                        <blockquote><p>在网易云未搜索到相关信息</p></blockquote>
+							                      </div>
+							                    </div>
+							                  </div>
+							                </div>
+									 	#end
+										#foreach($rowRecord in $!pageResult.records)
+											<div class="row product-list">
+												#foreach($song in $rowRecord.viewList)
+												<div class="col-md-$!rowRecord.cssLength col-sm-6 col-xs-12">
+													<div class="product-item">
+														<div class="pi-img-wrapper">
+															<img src="${song.songAlbumPic}" class="img-responsive"
+																alt="Berry Lace Dress">
+															<div>
+																<a href="$!song.songUrl" target="_blank"
+																	class="btn btn-default fancybox-fast-view">$!song.songSheet</a>
+															</div>
+														</div>
+														<h3>
+															<a href="$!song.songUrl" target="_blank">$!song.name</a>
+														</h3>
+														<button type="button" class="btn btn-primary"
+															onclick="radio(${song.id})">
+															<font style="vertical-align: inherit;"><font
+																style="vertical-align: inherit;">在线收听</font></font>
+														</button>
 													</div>
 												</div>
-												<h3>
-													<a href="$!song.songUrl" target="_blank">$!song.name</a>
-												</h3>
-												<button type="button" class="btn btn-primary"
-													onclick="radio(${song.id})">
-													<font style="vertical-align: inherit;"><font
-														style="vertical-align: inherit;">在线收听</font></font>
-												</button>
+												#end
+											</div>
+										#end
+										<div class="row">
+											<div class="col-md-12 col-sm-12" align="center">
+												<ul id="wangyi-page" class="pagination">
+	
+												</ul>
 											</div>
 										</div>
-										#end
-									</div>
-									#end
-									<div class="row">
-										<div class="col-md-12 col-sm-12" align="center">
-											<ul id="wangyi-page" class="pagination">
-
-											</ul>
-										</div>
-									</div>
 									#else
-									<div class="tab-pane fade">
-										<p>未查询到相关信息</p>
-									</div>
+										<div class="col-md-12 testimonials-v1">
+						                  <div id="myCarousel1" class="carousel slide">
+						                    <!-- Carousel items -->
+						                    <div class="carousel-inner">
+						                      <div class="active item">
+						                        <blockquote><p>请输入搜索条件进行搜索</p></blockquote>
+						                      </div>
+						                    </div>
+						                  </div>
+						                </div>
 									#end
 								</div>
-								<div class="tab-pane row fade" id="tab-2">
-									#foreach($rowRecord in $pageResult.records)
-									<div class="row product-list">
-										#foreach($song in $rowRecord.viewList)
-										<div class="col-md-$!rowRecord.cssLength col-sm-6 col-xs-12">
-											<div class="product-item">
-												<div class="pi-img-wrapper">
-													<img src="${song.songAlbumPic}" class="img-responsive"
-														alt="Berry Lace Dress">
-													<div>
-														<a href="$!song.songUrl"
-															class="btn btn-default fancybox-fast-view">$!song.songSheet</a>
+								<div class="tab-pane row fade #if($!type== "baidu") in active #end" id="tab-2">
+									#if($pageResult.records) 
+										#if($pageResult.records.size() == 0)
+										 	<div class="col-md-12 testimonials-v1">
+							                  <div id="myCarousel1" class="carousel slide">
+							                    <div class="carousel-inner">
+							                      <div class="active item">
+							                        <blockquote><p>在百度音乐未搜索到相关信息</p></blockquote>
+							                      </div>
+							                    </div>
+							                  </div>
+							                </div>
+									 	#end
+										#foreach($rowRecord in $pageResult.records)
+											<div class="row product-list">
+												#foreach($song in $rowRecord.viewList)
+												<div class="col-md-$!rowRecord.cssLength col-sm-6 col-xs-12">
+													<div class="product-item">
+														<div class="pi-img-wrapper">
+															<img src="${song.songAlbumPic}" class="img-responsive"
+																alt="${song.songAlbumPic}">
+															<div>
+																<a href="$!song.songUrl" target="_blank"
+																	class="btn btn-default fancybox-fast-view">$!song.songSheet</a>
+															</div>
+														</div>
+														<h3>
+															<a href="$!song.songUrl"  target="_blank">$!song.name</a>
+														</h3>
+														<button type="button" class="btn btn-primary" disabled="disabled"
+															onclick="radio(${song.id})">
+															<font style="vertical-align: inherit;"><font
+																style="vertical-align: inherit;">在线收听</font></font>
+														</button>
 													</div>
 												</div>
-												<h3>
-													<a href="$!song.songUrl">$!song.name</a>
-												</h3>
-												<button type="button" class="btn btn-primary"
-													onclick="radio(${song.id})">
-													<font style="vertical-align: inherit;"><font
-														style="vertical-align: inherit;">在线收听</font></font>
-												</button>
+												#end
+											</div>
+										#end
+										<div class="row">
+											<div class="col-md-12 col-sm-12" align="center">
+												<ul id="baidu-page" class="pagination">
+	
+												</ul>
 											</div>
 										</div>
-										#end
-									</div>
+									#else 
+										<div class="col-md-12 testimonials-v1">
+						                  <div id="myCarousel2" class="carousel slide">
+						                    <div class="carousel-inner">
+						                      <div class="active item">
+						                        <blockquote><p>请输入搜索条件进行搜索</p></blockquote>
+						                      </div>
+						                    </div>
+						                  </div>
+						                </div>
 									#end
-									<div class="row">
-										<div class="col-md-12 col-sm-12" align="center">
-											<ul id="baidu-page" class="pagination">
-
-											</ul>
-										</div>
-									</div>
 								</div>
-								<div class="tab-pane fade" id="tab-3">
-									<p>暂未开放</p>
+								<div class="tab-pane row fade #if($!type== "xiami") in active #end" id="tab-3">
+									<div class="col-md-12 testimonials-v1">
+					                  <div id="myCarousel3" class="carousel slide">
+					                    <!-- Carousel items -->
+					                    <div class="carousel-inner">
+					                      <div class="active item">
+					                        <blockquote><p>暂未开放</p></blockquote>
+					                      </div>
+					                    </div>
+					                  </div>
+					                </div>
 								</div>
-								<div class="tab-pane fade" id="tab-4">
-									<p>暂未开放</p>
+								<div class="tab-pane row fade #if($!type== "qq") in active #end" id="tab-4">
+									<div class="col-md-12 testimonials-v1">
+					                  <div id="myCarousel4" class="carousel slide">
+					                    <div class="carousel-inner">
+					                      <div class="active item">
+					                        <blockquote><p>暂未开放</p></blockquote>
+					                      </div>
+					                    </div>
+					                  </div>
+					                </div>
 								</div>
 							</div>
 						</div>
-						<!-- END TABS -->
 					</div>
 				</form>
 			</div>
 		</div>
-		<!-- END CONTENT -->
 	</div>
 </div>
 <script type="text/javascript">
