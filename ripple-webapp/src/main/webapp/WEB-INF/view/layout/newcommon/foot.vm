@@ -1,15 +1,50 @@
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+	$(function() {
+		$("#feedButton").click(function() {
+			var mobile = $("#contacts-mobile").val();
+			var email = $("#contacts-email").val();
+			var description = $("#contacts-description").val();
+
+			if (mobile.length == 0 && email.length == 0) {
+				alert("手机号/邮箱不能同时为空");
+				return;
+			}
+
+			if (description.length == 0 || description.length > 500) {
+				alert("反馈信息不能为空或者长度过长");
+				return;
+			}
+
+			$.ajax({
+				url : "/ripple/userBack/save",
+				type : "post",
+				dataType : "json",
+				data : {
+					mobile : mobile,
+					emailAddress : email,
+					description : description,
+				},
+				success : function(result) {
+					document.getElementById("userFeedForm").reset();
+				}
+			});
+		});
+	});
+</script>
 
 <div class="pre-footer">
 	<div class="container">
 		<div class="row">
 			<!-- BEGIN BOTTOM ABOUT BLOCK -->
-			<div class="col-md-4 col-sm-6 pre-footer-col">
+			<div class="col-md-3 col-sm-6 pre-footer-col">
 				<h2>关于我们</h2>
 				<p>本网站旨在学习交流，网站资源均来源于互联网，如发现有侵权请告知删除。</p>
 			</div>
 			<!-- END BOTTOM ABOUT BLOCK -->
 			<!-- BEGIN BOTTOM INFO BLOCK -->
-			<div class="col-md-4 col-sm-6 pre-footer-col">
+			<div class="col-md-3 col-sm-6 pre-footer-col">
 				<h2>网站资源</h2>
 				<ul class="list-unstyled">
 					<li><i class="fa fa-angle-right"></i> <a href="javascript:;">1、爬取数据</a></li>
@@ -19,32 +54,56 @@
 			</div>
 			<!-- END INFO BLOCK -->
 
-			<!-- BEGIN BOTTOM CONTACTS -->
-			<div class="col-md-4 col-sm-6 pre-footer-col">
+			<div class="col-md-3 col-sm-6 pre-footer-col">
 				<h2>联系我们</h2>
 				<address class="margin-bottom-40">
 					Email: <a href="javascript:;">wl_stone@aliyun.com</a><br>
 				</address>
 			</div>
-			<!-- END BOTTOM CONTACTS -->
+			<div class="col-md-3 col-sm-9">
+				<h2>用户反馈</h2>
+				<p></p>
+				<form action="" role="form" method="post" id="userFeedForm" >
+					<div class="form-group">
+						<label for="contacts-mobile">手机号</label> <input type="text"
+							class="form-control" name="mobile" id="contacts-mobile">
+					</div>
+					<div class="form-group">
+						<label for="contacts-email">邮箱</label> <input type="email"
+							class="form-control" name="emailAddress" id="contacts-email">
+					</div>
+					<div class="form-group">
+						<label for="contacts-message">描述</label>
+						<textarea class="form-control" rows="5" name="description"
+							id="contacts-description"></textarea>
+					</div>
+					<button id="feedButton" type="button" class="btn btn-primary">
+						<i class="icon-ok"></i> 确定
+					</button>
+					<button type="button" class="btn btn-default">取消</button>
+				</form>
+			</div>
 		</div>
 		<hr>
 	</div>
 </div>
 <!-- END PRE-FOOTER -->
 
-<!-- BEGIN FOOTER -->
 <div class="footer">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-4 col-sm-6 padding-top-10">Copyright 2019 © xdong.cn</div>
+			<div class="col-md-4 col-sm-6 padding-top-10">Copyright 2019 ©
+				xdong.cn</div>
 			<div class="col-md-4 col-sm-6 padding-top-10">浙ICP备18015886号-1</div>
-			<div class="col-md-4 col-sm-6 padding-top-10"><a target="_blank"
-							href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33010602009251"
-							style="display: inline-block; text-decoration: none; height: 20px; line-height: 20px;"><img
-							src="//img.alicdn.com/tps/TB1yEqRPXXXXXXPXpXXXXXXXXXX-20-20.png" style="float: left;" />浙公网安备33010602009251号</a></div>
+			<div class="col-md-4 col-sm-6 padding-top-10">
+				<a target="_blank"
+					href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33010602009251"
+					style="display: inline-block; text-decoration: none; height: 20px; line-height: 20px;"><img
+					src="//img.alicdn.com/tps/TB1yEqRPXXXXXXPXpXXXXXXXXXX-20-20.png"
+					style="float: left;" />浙公网安备33010602009251号</a>
+			</div>
+			111112321312
 		</div>
 	</div>
 </div>
-<!-- END FOOTER -->
 </div>

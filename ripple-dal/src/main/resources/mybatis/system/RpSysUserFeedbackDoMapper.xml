@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xdong.ripple.dal.mapper.system.RpSysUserFeedbackDoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xdong.ripple.dal.entity.system.RpSysUserFeedbackDo">
+        <id column="id" property="id" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="uid" property="uid" />
+        <result column="description" property="description" />
+        <result column="image_urls" property="imageUrls" />
+        <result column="email_address" property="emailAddress" />
+        <result column="mobile" property="mobile" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time AS createTime, update_time AS updateTime, uid, description, image_urls AS imageUrls, email_address AS emailAddress, mobile
+    </sql>
+
+</mapper>
