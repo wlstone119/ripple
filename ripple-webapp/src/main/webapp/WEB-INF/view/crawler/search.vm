@@ -241,7 +241,7 @@
 						                    <!-- Carousel items -->
 						                    <div class="carousel-inner">
 						                      <div class="active item">
-						                        <blockquote><p>请输入搜索条件进行搜索</p></blockquote>
+						                        <blockquote><p style="color:red;font-weight:bold">请输入搜索条件进行搜索</p></blockquote>
 						                      </div>
 						                    </div>
 						                  </div>
@@ -299,7 +299,7 @@
 						                  <div id="myCarousel2" class="carousel slide">
 						                    <div class="carousel-inner">
 						                      <div class="active item">
-						                        <blockquote><p>请输入搜索条件进行搜索</p></blockquote>
+						                        <blockquote><p  style="color:red;font-weight:bold">请输入搜索条件进行搜索</p></blockquote>
 						                      </div>
 						                    </div>
 						                  </div>

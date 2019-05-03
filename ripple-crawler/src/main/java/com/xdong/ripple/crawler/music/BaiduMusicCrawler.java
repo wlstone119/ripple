@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -51,26 +52,18 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
         ExecutorService service = null;
         List<String> resultList = new ArrayList<String>();
 
-        try {
-            ArrayList<FutureTask<String>> taskList = new ArrayList<FutureTask<String>>();
-            service = Executors.newCachedThreadPool();
+        ArrayList<FutureTask<String>> taskList = new ArrayList<FutureTask<String>>();
+        service = Executors.newCachedThreadPool();
 
-            for (int i = begin; i < end; i++) {
-                FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskRunnable(url,
-                                                                                                      (i * 20) + ""));
-                taskList.add(task);
-            }
-            for (FutureTask<String> task : taskList) {
-                try {
-                    resultList.add(task.get());
-                } catch (InterruptedException | ExecutionException e) {
-                    logger.error("线程任务执行异常", e);
-                }
-            }
-        } finally {
-            if (service != null) {
-                service.shutdown();
-                logger.info("关闭线程池!");
+        for (int i = begin; i < end; i++) {
+            FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskRunnable(url, (i * 20) + ""));
+            taskList.add(task);
+        }
+        for (FutureTask<String> task : taskList) {
+            try {
+                resultList.add(task.get());
+            } catch (InterruptedException | ExecutionException e) {
+                logger.error("线程任务执行异常", e);
             }
         }
 
@@ -142,48 +135,74 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
             if (!songUrl.startsWith("http") && !songUrl.startsWith("https")) {
                 songUrl = appendUrl(songUrl);
             }
+            String pageUrl = modifySongUrl(songUrl);
+
             // 获取歌单下的所有歌曲
-            Document songs = connectUrl(songUrl);
-            Elements songSheetEle = songs.getElementsByClass("songlist-info-inside");
-            Elements musicTbody = songs.getElementsByClass("song-list-wrap");
+            int offset = 0;
+            while (true) {
+                if (StringUtils.isBlank(pageUrl)) {
+                    break;
+                }
 
-            if (!musicTbody.isEmpty()) {
-                Element ul = musicTbody.get(0).getElementsByTag("ul").get(0);
-                if (!ul.children().isEmpty()) {
+                String executeUrl = String.format(pageUrl, offset);
 
-                    RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
-                    songDo.setcTime(new Date());
-                    songDo.setmTime(new Date());
-                    songDo.setmUser("system");
-                    songDo.setcUser("system");
-                    songDo.setStatus("valid");
-                    songDo.setResource(Constant.CRAWLER_RESOURCE_BAIDU);
+                Document songs = connectUrl(executeUrl);
+                Elements mainBody = songs.getElementsByClass("main-body");
 
-                    // 填充歌单信息
-                    fillSongSheet(songSheetEle, songDo);
+                if (mainBody.isEmpty()) {
+                    break;
+                } else {
+                    Elements songSheetEle = songs.getElementsByClass("songlist-info-inside");
+                    Elements musicTbody = songs.getElementsByClass("song-list-wrap");
+                    if (!musicTbody.isEmpty()) {
+                        Element ul = musicTbody.get(0).getElementsByTag("ul").get(0);
+                        if (!ul.children().isEmpty()) {
 
-                    for (Element musicLi : ul.children()) {
+                            RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
+                            songDo.setcTime(new Date());
+                            songDo.setmTime(new Date());
+                            songDo.setmUser("system");
+                            songDo.setcUser("system");
+                            songDo.setStatus("valid");
+                            songDo.setResource(Constant.CRAWLER_RESOURCE_BAIDU);
 
-                        // 填充歌曲信息
-                        for (Element var : musicLi.children()) {
-                            loopSong(var, songDo);
+                            // 填充歌单信息
+                            fillSongSheet(songSheetEle, songDo);
+
+                            for (Element musicLi : ul.children()) {
+
+                                // 填充歌曲信息
+                                for (Element var : musicLi.children()) {
+                                    loopSong(var, songDo);
+                                }
+
+                                if (rpSongsServiceImpl.checkSongIdExists(songDo.getSongId(),
+                                                                         Constant.CRAWLER_RESOURCE_BAIDU)) {
+                                    continue;
+                                }
+
+                                rpSongsServiceImpl.insert(songDo);
+                            }
                         }
-
-                        if (rpSongsServiceImpl.checkSongIdExists(songDo.getSongId(), Constant.CRAWLER_RESOURCE_BAIDU)) {
-                            continue;
+                    } else {
+                        if (!root.children().isEmpty()) {
+                            for (Element element : root.children()) {
+                                loopSongSheet(element);
+                            }
                         }
-
-                        rpSongsServiceImpl.insert(songDo);
                     }
                 }
-            }
-        } else {
-            if (!root.children().isEmpty()) {
-                for (Element element : root.children()) {
-                    loopSongSheet(element);
-                }
+
+                offset += 20;
             }
         }
+    }
+
+    private String modifySongUrl(String songUrl) {
+        if (StringUtils.isNotBlank(songUrl)) {
+            return songUrl + "offset/%s?third_type=";
+        }
+        return null;
     }
 
     private void fillSongSheet(Elements songSheetEle, RpCrawlerSongsDo songDo) {
