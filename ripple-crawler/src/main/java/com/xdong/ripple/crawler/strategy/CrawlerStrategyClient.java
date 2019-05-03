@@ -1,11 +1,18 @@
 package com.xdong.ripple.crawler.strategy;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+
+import javax.servlet.http.HttpUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.xdong.ripple.common.BizException;
+import com.xdong.ripple.common.utils.HttpUtil;
 import com.xdong.ripple.common.utils.SpringUtil;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
@@ -37,9 +44,24 @@ public class CrawlerStrategyClient {
         RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(urlKey);
         paramVo.setUrl(urlDo.getCrawlerUrl());
         paramVo.setDomainUrl(urlDo.getDomainName());
+        paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
         CrawlerStrategyInterface strategy = (CrawlerStrategyInterface) SpringUtil.getBeansByName(urlDo.getCrawlerClass());
 
         return strategy.execute(paramVo);
+    }
+
+    private Integer getLimit(String crawlerUrl) {
+        URL url;
+        try {
+            url = new URL(crawlerUrl);
+            Map<String, String> paramObj = HttpUtil.splitQueryString(url.getQuery());
+            if (paramObj.get("limitFlag") != null) {
+                return Integer.parseInt(paramObj.get("limitFlag"));
+            }
+        } catch (MalformedURLException e) {
+            throw BizException.create(String.format("param error: %s", crawlerUrl));
+        }
+        return null;
     }
 
     /**

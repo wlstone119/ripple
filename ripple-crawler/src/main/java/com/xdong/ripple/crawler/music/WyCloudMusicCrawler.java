@@ -48,20 +48,30 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
         domainUrl = paramVo.getDomainUrl();
 
         int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
-        int end = paramVo.getEnd() <= 0 ? 1 : paramVo.getEnd();
-        ExecutorService service = Executors.newCachedThreadPool();
+        int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
+        ExecutorService service = null;
 
-        ArrayList<FutureTask<String>> list = new ArrayList<FutureTask<String>>();
-        for (int i = begin; i < end; i++) {
-            FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskCallable(url, (i * 35) + ""));
-            list.add(task);
-        }
+        try {
+            service = Executors.newCachedThreadPool();
 
-        for (FutureTask<String> task : list) {
-            try {
-                resultList.add(task.get());
-            } catch (InterruptedException | ExecutionException e) {
-                logger.error("线程任务执行异常", e);
+            ArrayList<FutureTask<String>> list = new ArrayList<FutureTask<String>>();
+            for (int i = begin; i < end; i++) {
+                FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskCallable(url,
+                                                                                                      (i * 35) + ""));
+                list.add(task);
+            }
+
+            for (FutureTask<String> task : list) {
+                try {
+                    resultList.add(task.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    logger.error("线程任务执行异常", e);
+                }
+            }
+        } finally {
+            if (service != null) {
+                service.shutdown();
+                logger.info("关闭线程池!");
             }
         }
 
@@ -178,7 +188,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
             href = song.getElementsByTag("a").attr("href");
             songUrl = getSongUrlById(href);
             Long songId = Long.parseLong(href.substring(href.indexOf("=") + 1, href.length()));
-            
+
             if (rpSongsServiceImpl.checkSongIdExists(songId, Constant.CRAWLER_RESOURCE_WANGYI)) {
                 continue;
             }

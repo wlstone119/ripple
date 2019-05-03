@@ -92,9 +92,9 @@ public class CrawlerController extends BaseController {
     @ResponseBody
     public List<RpCrawlerUrlDo> getTableList(HttpServletRequest request) {
         List<RpCrawlerUrlDo> urlList = new ArrayList<RpCrawlerUrlDo>();
-        Cookie[] cookies  = request.getCookies();
-        for(Cookie var : cookies) {
-            if("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue())) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie var : cookies) {
+            if ("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue())) {
                 urlList = rpCrawlerUrlServiceImpl.selectList(new EntityWrapper<RpCrawlerUrlDo>());
             }
         }

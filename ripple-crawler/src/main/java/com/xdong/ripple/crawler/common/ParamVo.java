@@ -20,6 +20,8 @@ public class ParamVo {
     private String searchKey;
 
     private String modelName;
+    
+    private Integer limitPage;
 
     public String getSearchKey() {
         return searchKey;
@@ -75,5 +77,13 @@ public class ParamVo {
 
     public void setModelName(String modelName) {
         this.modelName = modelName;
+    }
+    
+    public Integer getLimitPage() {
+        return limitPage;
+    }
+    
+    public void setLimitPage(Integer limit) {
+        this.limitPage = limit;
     }
 }

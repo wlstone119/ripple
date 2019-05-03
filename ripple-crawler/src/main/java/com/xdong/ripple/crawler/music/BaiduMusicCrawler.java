@@ -1,15 +1,19 @@
 package com.xdong.ripple.crawler.music;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,28 +42,53 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
     @Override
     public Object execute(ParamVo paramVo) {
         final String url = paramVo.getUrl();
-        domainUrl = paramVo.getDomainUrl();
-        int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
-        int end = paramVo.getEnd() <= 0 ? 1 : paramVo.getEnd();
-        ExecutorService service = Executors.newCachedThreadPool();
 
-        for (int i = begin; i < end; i++) {
-            service.execute(new executeTaskRunnable(url, (i * 20) + ""));
+        domainUrl = paramVo.getDomainUrl();
+
+        int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
+        int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
+
+        ExecutorService service = null;
+        List<String> resultList = new ArrayList<String>();
+
+        try {
+            ArrayList<FutureTask<String>> taskList = new ArrayList<FutureTask<String>>();
+            service = Executors.newCachedThreadPool();
+
+            for (int i = begin; i < end; i++) {
+                FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskRunnable(url,
+                                                                                                      (i * 20) + ""));
+                taskList.add(task);
+            }
+            for (FutureTask<String> task : taskList) {
+                try {
+                    resultList.add(task.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    logger.error("线程任务执行异常", e);
+                }
+            }
+        } finally {
+            if (service != null) {
+                service.shutdown();
+                logger.info("关闭线程池!");
+            }
         }
-        return null;
+
+        return resultList;
     }
 
-    private class executeTaskRunnable implements Runnable {
+    private class ExecuteTaskRunnable implements Callable<String> {
 
         private String url;
 
-        public executeTaskRunnable(String url, String offset){
+        public ExecuteTaskRunnable(String url, String offset){
             this.url = modifyBaiduUrl(url, offset);
         }
 
         @Override
-        public void run() {
+        public String call() {
             getBaiduHotTopMusic(url);
+            return url;
         }
 
     }
