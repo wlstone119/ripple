@@ -28,4 +28,8 @@ public class IPUtils {
         return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
     }
 
+    public static String getDevice(HttpServletRequest request) {
+        return request.getHeader("User-Agent").toLowerCase();
+    }
+
 }

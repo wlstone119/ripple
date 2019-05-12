@@ -65,19 +65,13 @@ public class LogAspect {
         String methodName = signature.getName();
         sysLog.setMethod(className + "." + methodName + "()");
         // 请求的参数
-        Object[] args = joinPoint.getArgs();
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-
-        try {
-            String params = JSON.toJSONString(args);
-            sysLog.setParams(params);
-        } catch (Exception e) {
-            sysLog.setParams(request.getRequestURI() + "--" + JSON.toJSONString(request.getParameterMap()));
-            logger.error("获取参数异常", e);
-        }
+        
+        sysLog.setParams(JSON.toJSONString(request.getParameterMap()));
 
         // 获取request
-
+        sysLog.setDevice(IPUtils.getDevice(request));
+        
         // 设置IP地址
         sysLog.setIp(IPUtils.getIpAddr(request));
 

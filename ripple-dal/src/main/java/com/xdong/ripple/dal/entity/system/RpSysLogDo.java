@@ -7,15 +7,6 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import java.io.Serializable;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
 
 /**
  * <p>
@@ -31,43 +22,47 @@ public class RpSysLogDo extends Model<RpSysLogDo> {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Long              id;
     /**
      * 用户id
      */
     @TableField("user_id")
-    private Long userId;
+    private Long              userId;
     /**
      * 用户名
      */
-    private String username;
+    private String            username;
     /**
      * 用户操作
      */
-    private String operation;
+    private String            operation;
     /**
      * 响应时间
      */
     @TableField("TIME")
-    private Integer time;
+    private Integer           time;
     /**
      * 请求方法
      */
-    private String method;
+    private String            method;
     /**
      * 请求参数
      */
-    private String params;
+    private String            params;
     /**
      * IP地址
      */
-    private String ip;
+    private String            ip;
     /**
      * 创建时间
      */
     @TableField("gmt_create")
-    private Date gmtCreate;
+    private Date              gmtCreate;
 
+    /**
+     * 设备信息
+     */
+    private String            device;
 
     public Long getId() {
         return id;
@@ -141,6 +136,14 @@ public class RpSysLogDo extends Model<RpSysLogDo> {
         this.gmtCreate = gmtCreate;
     }
 
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
+    }
+
     @Override
     protected Serializable pkVal() {
         return this.id;
@@ -148,16 +151,8 @@ public class RpSysLogDo extends Model<RpSysLogDo> {
 
     @Override
     public String toString() {
-        return "RpSysLogDo{" +
-        "id=" + id +
-        ", userId=" + userId +
-        ", username=" + username +
-        ", operation=" + operation +
-        ", time=" + time +
-        ", method=" + method +
-        ", params=" + params +
-        ", ip=" + ip +
-        ", gmtCreate=" + gmtCreate +
-        "}";
+        return "RpSysLogDo{" + "id=" + id + ", userId=" + userId + ", username=" + username + ", operation=" + operation
+               + ", time=" + time + ", method=" + method + ", params=" + params + ", ip=" + ip + ", gmtCreate="
+               + gmtCreate + ", device=" + device + "}";
     }
 }
