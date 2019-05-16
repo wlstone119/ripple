@@ -190,6 +190,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
             Long songId = Long.parseLong(href.substring(href.indexOf("=") + 1, href.length()));
 
             if (rpSongsServiceImpl.checkSongIdExists(songId, Constant.CRAWLER_RESOURCE_WANGYI)) {
+                logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
                 continue;
             }
 
@@ -225,6 +226,8 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
                                                                                         albumPicUrl.indexOf("?")) : albumPicUrl);
 
             rpSongsServiceImpl.insert(songDo);
+
+            logger.info("已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
         }
 
     }

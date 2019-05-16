@@ -52,18 +52,27 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
         ExecutorService service = null;
         List<String> resultList = new ArrayList<String>();
 
-        ArrayList<FutureTask<String>> taskList = new ArrayList<FutureTask<String>>();
-        service = Executors.newCachedThreadPool();
+        try {
+            ArrayList<FutureTask<String>> taskList = new ArrayList<FutureTask<String>>();
+            service = Executors.newCachedThreadPool();
 
-        for (int i = begin; i < end; i++) {
-            FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskRunnable(url, (i * 20) + ""));
-            taskList.add(task);
-        }
-        for (FutureTask<String> task : taskList) {
-            try {
-                resultList.add(task.get());
-            } catch (InterruptedException | ExecutionException e) {
-                logger.error("线程任务执行异常", e);
+            for (int i = begin; i < end; i++) {
+                FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskRunnable(url,
+                                                                                                      (i * 20) + ""));
+                taskList.add(task);
+            }
+
+            for (FutureTask<String> task : taskList) {
+                try {
+                    resultList.add(task.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    logger.error("线程任务执行异常", e);
+                }
+            }
+        } finally {
+            if (service != null) {
+                service.shutdown();
+                logger.info("爬虫任务完成，关闭线程池！");
             }
         }
 
@@ -129,78 +138,87 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
      * @throws IOException
      */
     private void loopSongSheet(Element root) throws IOException {
-        if (root.hasAttr("href") && root.hasAttr("title") && !root.hasAttr("target")) {// <a>标签
-            String songUrl = root.attr("href").trim();// 歌单url
+        Elements elements = root.children();
+        for (Element ele : elements) {
+            if (ele.hasClass("text-title")) {
+                Elements childs = ele.children();
+                for (Element aSheet : childs) {
+                    if (aSheet.hasAttr("href") && aSheet.hasAttr("title")) {
+                        String songUrl = aSheet.attr("href").trim();// 歌单url
 
-            if (!songUrl.startsWith("http") && !songUrl.startsWith("https")) {
-                songUrl = appendUrl(songUrl);
-            }
-            String pageUrl = modifySongUrl(songUrl);
-
-            // 获取歌单下的所有歌曲
-            int offset = 0;
-            while (true) {
-                if (StringUtils.isBlank(pageUrl)) {
-                    break;
-                }
-
-                String executeUrl = String.format(pageUrl, offset);
-
-                Document songs = connectUrl(executeUrl);
-                Elements mainBody = songs.getElementsByClass("main-body");
-
-                if (mainBody.isEmpty()) {
-                    break;
-                } else {
-                    Elements songSheetEle = songs.getElementsByClass("songlist-info-inside");
-                    Elements musicTbody = songs.getElementsByClass("song-list-wrap");
-                    if (!musicTbody.isEmpty()) {
-                        Element ul = musicTbody.get(0).getElementsByTag("ul").get(0);
-                        if (!ul.children().isEmpty()) {
-
-                            RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
-                            songDo.setcTime(new Date());
-                            songDo.setmTime(new Date());
-                            songDo.setmUser("system");
-                            songDo.setcUser("system");
-                            songDo.setStatus("valid");
-                            songDo.setResource(Constant.CRAWLER_RESOURCE_BAIDU);
-
-                            // 填充歌单信息
-                            fillSongSheet(songSheetEle, songDo);
-
-                            for (Element musicLi : ul.children()) {
-
-                                // 填充歌曲信息
-                                for (Element var : musicLi.children()) {
-                                    loopSong(var, songDo);
-                                }
-
-                                if (rpSongsServiceImpl.checkSongIdExists(songDo.getSongId(),
-                                                                         Constant.CRAWLER_RESOURCE_BAIDU)) {
-                                    continue;
-                                }
-
-                                rpSongsServiceImpl.insert(songDo);
-                            }
+                        if (!songUrl.startsWith("http") && !songUrl.startsWith("https")) {
+                            songUrl = appendUrl(songUrl);
                         }
-                    } else {
-                        if (!root.children().isEmpty()) {
-                            for (Element element : root.children()) {
-                                loopSongSheet(element);
+                        String pageUrl = modifySongUrl(songUrl);
+
+                        // 获取歌单下的所有歌曲
+                        int offset = 0;
+                        while (true) {
+                            if (StringUtils.isBlank(pageUrl)) {
+                                break;
                             }
+
+                            String executeUrl = String.format(pageUrl, offset);
+
+                            Document songs = connectUrl(executeUrl);
+                            Elements mainBody = songs.getElementsByClass("main-body");
+
+                            if (mainBody.isEmpty()) {
+                                break;
+                            } else {
+                                Elements songSheetEle = songs.getElementsByClass("songlist-info-inside");
+                                Elements musicTbody = songs.getElementsByClass("song-list-wrap");
+                                if (!musicTbody.isEmpty()) {
+                                    Element ul = musicTbody.get(0).getElementsByTag("ul").get(0);
+                                    if (!ul.children().isEmpty()) {
+
+                                        RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
+                                        songDo.setcTime(new Date());
+                                        songDo.setmTime(new Date());
+                                        songDo.setmUser("system");
+                                        songDo.setcUser("system");
+                                        songDo.setStatus("valid");
+                                        songDo.setResource(Constant.CRAWLER_RESOURCE_BAIDU);
+
+                                        // 填充歌单信息
+                                        fillSongSheet(songSheetEle, songDo);
+
+                                        for (Element musicLi : ul.children()) {
+
+                                            // 填充歌曲信息
+                                            for (Element var : musicLi.children()) {
+                                                loopSong(var, songDo);
+                                            }
+
+                                            if (rpSongsServiceImpl.checkSongIdExists(songDo.getSongId(),
+                                                                                     Constant.CRAWLER_RESOURCE_BAIDU)) {
+                                                logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_BAIDU + "-"
+                                                            + songDo.getSongId());
+                                                continue;
+                                            }
+
+                                            rpSongsServiceImpl.insert(songDo);
+
+                                            logger.info("已收录歌曲：" + songDo.getName() + " 歌曲来源及主键："
+                                                        + Constant.CRAWLER_RESOURCE_BAIDU + "-" + songDo.getSongId());
+                                        }
+                                    }
+                                }
+                            }
+
+                            offset += 20;
                         }
                     }
-                }
 
-                offset += 20;
+                    break;
+                }
             }
         }
     }
 
     private String modifySongUrl(String songUrl) {
         if (StringUtils.isNotBlank(songUrl)) {
-            return songUrl + "offset/%s?third_type=";
+            return songUrl + "/offset/%s?third_type=";
         }
         return null;
     }

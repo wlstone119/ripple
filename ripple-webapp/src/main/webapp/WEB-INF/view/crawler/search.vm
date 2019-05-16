@@ -18,15 +18,18 @@
 			if(endPage > pages){
 				endPage = pages;
 			} else {
-				endPage = pageNo + 1;
+				endPage = pageNo + 3;
+				if(endPage > pages){
+					endPage = pages;
+				}
 			}
 			
-			goPage(type, pageNo, endPage);
+			goPage(type, pageNo, endPage, pages);
 		}
 		
 	}); 
 	
-	function goPage(type, current, endpage){
+	function goPage(type, current, endpage, pages){
 		var tempStr = "<li><a href='javascript:;' onclick='goUpPage();'>«</a></li>";
 		if(endpage > 15){
 			for(var i = 1; i <= endpage; i++){
@@ -260,6 +263,8 @@
 							                    </div>
 							                  </div>
 							                </div>
+							                #else
+							                <blockquote><p style="font-size:13px;color:red">tips:百度音乐暂不支持在线收听，可以点击链接前往百度音乐收听歌曲。</p></blockquote>
 									 	#end
 										#foreach($rowRecord in $pageResult.records)
 											<div class="row product-list">
