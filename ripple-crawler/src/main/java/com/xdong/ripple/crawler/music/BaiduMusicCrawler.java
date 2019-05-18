@@ -12,15 +12,18 @@ import java.util.concurrent.FutureTask;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.xdong.ripple.common.crawler.SupplementErrorTask;
+import com.xdong.ripple.common.enums.CrawlerMusicTaskTypeEnum;
 import com.xdong.ripple.crawler.common.Constant;
+import com.xdong.ripple.crawler.common.CrawlerUtil;
 import com.xdong.ripple.crawler.common.ParamVo;
+import com.xdong.ripple.crawler.strategy.CrawlerCompensateInterface;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyInterface;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
@@ -31,7 +34,7 @@ import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
  * @author wanglei Mar 24, 2019 9:18:55 PM
  */
 @Service
-public class BaiduMusicCrawler implements CrawlerStrategyInterface {
+public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompensateInterface {
 
     private static Logger          logger    = Logger.getLogger(BaiduMusicCrawler.class);
 
@@ -39,6 +42,9 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
 
     @Autowired
     private IRpCrawlerSongsService rpSongsServiceImpl;
+
+    @Autowired
+    private CompensateTaskExecutor taskExecutor;
 
     @Override
     public Object execute(ParamVo paramVo) {
@@ -73,6 +79,10 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
             if (service != null) {
                 service.shutdown();
                 logger.info("爬虫任务完成，关闭线程池！");
+
+                synchronized (taskExecutor.lockMonitor) {
+                    taskExecutor.lockMonitor.notify();
+                }
             }
         }
 
@@ -105,13 +115,14 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
      * @param url
      */
     public void getBaiduHotTopMusic(String url) {
-        logger.info(String.format("线程：【" + Thread.currentThread().getName() + "】-> 开始爬取： %s", "href:" + url));
+        logger.info("线程：【" + Thread.currentThread().getName() + "】-> 开始爬取，url:" + url);
 
-        Document dom = null;
-        try {
-            dom = connectUrl(url);
-        } catch (IOException e) {
-            logger.error("io exception:", e);
+        Document dom = CrawlerUtil.connectUrl(url);
+        if (dom == null) {
+            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 未获取到网页信息，终止爬虫，url:" + url);
+            taskExecutor.errorUrlQueue.add(new SupplementErrorTask(this.getClass().getName(),
+                                                                   CrawlerMusicTaskTypeEnum.SONGSHEET, url));
+            return;
         }
 
         Elements songDivs = dom.getElementsByClass("songlist-list");
@@ -149,68 +160,86 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
                         if (!songUrl.startsWith("http") && !songUrl.startsWith("https")) {
                             songUrl = appendUrl(songUrl);
                         }
+
                         String pageUrl = modifySongUrl(songUrl);
 
                         // 获取歌单下的所有歌曲
                         int offset = 0;
                         while (true) {
                             if (StringUtils.isBlank(pageUrl)) {
+                                logger.error("线程：【" + Thread.currentThread().getName()
+                                             + "】-> 请检查获取的songUrl是否准确？songUrl:" + songUrl);
                                 break;
                             }
 
                             String executeUrl = String.format(pageUrl, offset);
+                            Document songs = CrawlerUtil.connectUrl(executeUrl);
+                            if (songs == null) {
+                                logger.error("线程：【" + Thread.currentThread().getName() + "】-> 未获取到网页信息，终止爬虫，url:"
+                                             + executeUrl);
 
-                            Document songs = connectUrl(executeUrl);
-                            Elements mainBody = songs.getElementsByClass("main-body");
+                                // 放入补单队列
+                                taskExecutor.errorUrlQueue.add(new SupplementErrorTask(this.getClass().getName(),
+                                                                                       CrawlerMusicTaskTypeEnum.SONGS,
+                                                                                       executeUrl));
 
-                            if (mainBody.isEmpty()) {
                                 break;
-                            } else {
-                                Elements songSheetEle = songs.getElementsByClass("songlist-info-inside");
-                                Elements musicTbody = songs.getElementsByClass("song-list-wrap");
-                                if (!musicTbody.isEmpty()) {
-                                    Element ul = musicTbody.get(0).getElementsByTag("ul").get(0);
-                                    if (!ul.children().isEmpty()) {
-
-                                        RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
-                                        songDo.setcTime(new Date());
-                                        songDo.setmTime(new Date());
-                                        songDo.setmUser("system");
-                                        songDo.setcUser("system");
-                                        songDo.setStatus("valid");
-                                        songDo.setResource(Constant.CRAWLER_RESOURCE_BAIDU);
-
-                                        // 填充歌单信息
-                                        fillSongSheet(songSheetEle, songDo);
-
-                                        for (Element musicLi : ul.children()) {
-
-                                            // 填充歌曲信息
-                                            for (Element var : musicLi.children()) {
-                                                loopSong(var, songDo);
-                                            }
-
-                                            if (rpSongsServiceImpl.checkSongIdExists(songDo.getSongId(),
-                                                                                     Constant.CRAWLER_RESOURCE_BAIDU)) {
-                                                logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_BAIDU + "-"
-                                                            + songDo.getSongId());
-                                                continue;
-                                            }
-
-                                            rpSongsServiceImpl.insert(songDo);
-
-                                            logger.info("已收录歌曲：" + songDo.getName() + " 歌曲来源及主键："
-                                                        + Constant.CRAWLER_RESOURCE_BAIDU + "-" + songDo.getSongId());
-                                        }
-                                    }
-                                }
                             }
+
+                            Elements mainBody = songs.getElementsByClass("main-body");
+                            if (mainBody.isEmpty()) {
+                                logger.error("线程：【" + Thread.currentThread().getName()
+                                             + "】-> 未获取到百度歌曲信息，退出当前歌单循环，最后一页url:" + executeUrl);
+                                break;
+                            }
+
+                            // 收录歌曲信息
+                            executeSongUrl(songs);
 
                             offset += 20;
                         }
                     }
+                }
+            }
+        }
+    }
 
-                    break;
+    private void executeSongUrl(Document songs) {
+
+        Elements songSheetEle = songs.getElementsByClass("songlist-info-inside");
+        Elements musicTbody = songs.getElementsByClass("song-list-wrap");
+        if (!musicTbody.isEmpty()) {
+            Element ul = musicTbody.get(0).getElementsByTag("ul").get(0);
+            if (!ul.children().isEmpty()) {
+
+                RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
+                songDo.setcTime(new Date());
+                songDo.setmTime(new Date());
+                songDo.setmUser("system");
+                songDo.setcUser("system");
+                songDo.setStatus("valid");
+                songDo.setResource(Constant.CRAWLER_RESOURCE_BAIDU);
+
+                // 填充歌单信息
+                fillSongSheet(songSheetEle, songDo);
+
+                // 所有歌曲遍历保存
+                for (Element musicLi : ul.children()) {
+
+                    // 填充歌曲信息
+                    for (Element var : musicLi.children()) {
+                        loopSong(var, songDo);
+                    }
+
+                    if (rpSongsServiceImpl.checkSongIdExists(songDo.getSongId(), Constant.CRAWLER_RESOURCE_BAIDU)) {
+                        //logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_BAIDU + "-" + songDo.getSongId());
+                        continue;
+                    }
+
+                    rpSongsServiceImpl.insert(songDo);
+
+                    logger.info("已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_BAIDU + "-"
+                                + songDo.getSongId());
                 }
             }
         }
@@ -289,12 +318,41 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface {
         return Long.parseLong(songUrl.substring(songUrl.lastIndexOf("/") + 1, songUrl.length()));
     }
 
-    private Document connectUrl(String url) throws IOException {
-        return Jsoup.connect(url).userAgent("Mozilla").get();
-    }
-
     private String appendUrl(String url) {
         return domainUrl + url;
+    }
+
+    @Override
+    public boolean songSheetUrlCompensate(SupplementErrorTask task) {
+        getBaiduHotTopMusic(task.getTaskUrl());
+        return true;
+    }
+
+    @Override
+    public boolean songUrlCompensate(SupplementErrorTask task) {
+        Document songs = CrawlerUtil.connectUrl(task.getTaskUrl());
+        if (songs == null) {
+            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 补单未获取到网页信息，终止爬虫，url:" + task.getTaskUrl());
+
+            // 放入补单队列
+            SupplementErrorTask errorTask = new SupplementErrorTask(this.getClass().getName(),
+                                                                    CrawlerMusicTaskTypeEnum.SONGS, task.getTaskUrl());
+            errorTask.setRetryCount(task.getRetryCount() + 1);
+            taskExecutor.errorUrlQueue.add(errorTask);
+
+            return false;
+        }
+
+        Elements mainBody = songs.getElementsByClass("main-body");
+        if (mainBody.isEmpty()) {
+            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 补单未获取到百度歌曲信息，url:" + task.getTaskUrl());
+            return false;
+        }
+
+        // 收录歌曲信息
+        executeSongUrl(songs);
+
+        return true;
     }
 
 }

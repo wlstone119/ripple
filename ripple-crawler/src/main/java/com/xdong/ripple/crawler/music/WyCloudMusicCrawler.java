@@ -17,10 +17,12 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.xdong.ripple.common.crawler.SupplementErrorTask;
+import com.xdong.ripple.common.enums.CrawlerMusicTaskTypeEnum;
 import com.xdong.ripple.crawler.common.Constant;
 import com.xdong.ripple.crawler.common.CrawlerUtil;
 import com.xdong.ripple.crawler.common.ParamVo;
-import com.xdong.ripple.crawler.strategy.CrawlerSearchInterface;
+import com.xdong.ripple.crawler.strategy.CrawlerCompensateInterface;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyInterface;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
@@ -31,7 +33,7 @@ import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
  * @author wanglei Mar 24, 2019 9:21:38 PM
  */
 @Service
-public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSearchInterface {
+public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCompensateInterface {
 
     private static Logger          logger    = Logger.getLogger(WyCloudMusicCrawler.class);
 
@@ -39,6 +41,9 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
 
     @Autowired
     private IRpCrawlerSongsService rpSongsServiceImpl;
+
+    @Autowired
+    private CompensateTaskExecutor taskExecutor;
 
     @Override
     public Object execute(ParamVo paramVo) {
@@ -64,7 +69,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
             for (FutureTask<String> task : list) {
                 try {
                     resultList.add(task.get());
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (Exception e) {
                     logger.error("线程任务执行异常", e);
                 }
             }
@@ -72,6 +77,10 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
             if (service != null) {
                 service.shutdown();
                 logger.info("关闭线程池!");
+
+                synchronized (taskExecutor.lockMonitor) {
+                    taskExecutor.lockMonitor.notify();
+                }
             }
         }
 
@@ -103,18 +112,21 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
      * @param url
      */
     private String getWyMusicByCat(String url) {
-        try {
-            Document dom = CrawlerUtil.connectUrl(url);
-            Element songSheets = dom.getElementById("m-pl-container");
-            if (songSheets != null) {
-                for (Element songSheet : songSheets.children()) {
-                    loopSongSheet(songSheet);
-                }
+        Document dom = CrawlerUtil.connectUrl(url);
+        if (dom == null) {
+            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 未获取到网页信息，终止爬虫，url:" + url);
+
+            taskExecutor.errorUrlQueue.add(new SupplementErrorTask(this.getClass().getName(),
+                                                                   CrawlerMusicTaskTypeEnum.SONGSHEET, url));
+
+            return url + "【NULL PAGE】";
+        }
+
+        Element songSheets = dom.getElementById("m-pl-container");
+        if (songSheets != null) {
+            for (Element songSheet : songSheets.children()) {
+                loopSongSheet(songSheet);
             }
-        } catch (IOException e) {
-            logger.error("io exception:", e);
-        } catch (Exception e) {
-            logger.error(String.format("爬取音乐榜单时出现异常：url %s", url), e);
         }
 
         return url;
@@ -126,7 +138,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
      * @param root
      * @throws IOException
      */
-    private void loopSongSheet(Element songSheet) throws IOException {
+    private void loopSongSheet(Element songSheet) {
         if (songSheet.hasAttr("href") && songSheet.hasAttr("title")
             && ("tit f-thide s-fc0".equals(songSheet.attr("class")))) {// <a>标签
             String songUrl = songSheet.attr("href").trim();// 歌单url
@@ -157,7 +169,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
      * @param musicTr
      * @throws IOException
      */
-    private void writeToDB(Elements songsList, Element songSheetDiv) throws IOException {
+    private void writeToDB(Elements songsList, Element songSheetDiv) {
 
         RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
         songDo.setcTime(new Date());
@@ -190,7 +202,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
             Long songId = Long.parseLong(href.substring(href.indexOf("=") + 1, href.length()));
 
             if (rpSongsServiceImpl.checkSongIdExists(songId, Constant.CRAWLER_RESOURCE_WANGYI)) {
-                logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
+                //logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
                 continue;
             }
 
@@ -256,41 +268,14 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerSea
     }
 
     @Override
-    public Object search(ParamVo paramVo) {
-        try {
-            Document dom = CrawlerUtil.connectUrl(paramVo.getUrl());
-            Element songSheets = dom.getElementById("m-search");
-            if (songSheets != null) {
-                for (Element songSheet : songSheets.children()) {
-                    loopSearchList(songSheet);
-                }
-            }
-        } catch (IOException e) {
-            logger.error("io exception:", e);
-        } catch (Exception e) {
-
-        }
-        return null;
+    public boolean songSheetUrlCompensate(SupplementErrorTask task) {
+        getWyMusicByCat(task.getTaskUrl());
+        return true;
     }
 
-    private void loopSearchList(Element songSheet) {
-        if ("srchsongst".equals(songSheet.attr("class"))) {
-            Elements elements = songSheet.children();
-            for (Element ele : elements) {
-                loopTable(ele);
-            }
-        } else {
-            if (!songSheet.children().isEmpty()) {
-                loopSearchList(songSheet);
-            }
-        }
-    }
+    @Override
+    public boolean songUrlCompensate(SupplementErrorTask task) {
 
-    private void loopTable(Element ele) {
-        Elements elements = ele.children();
-        for (Element ele2 : elements) {
-
-        }
-
+        return false;
     }
 }

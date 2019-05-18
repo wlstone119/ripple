@@ -1,6 +1,5 @@
 package com.xdong.ripple.crawler.music.search;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,23 +31,16 @@ public class WyCloudMusicSearchCrawler implements CrawlerStrategyInterface {
         // String bufferUrl = Constant.CRAWLER_PREFIXURL_WANGYI + "/search/#/?s=" + searchKey + "&type=1";
         String bufferUrl = "http://music.163.com/search/#/?s=xuezhiqian&type=1";
 
-        try {
-            Document dom = CrawlerUtil.connectUrl(bufferUrl);
+        Document dom = CrawlerUtil.connectUrl(bufferUrl);
 
-            Elements songSheets = dom.getElementsByClass("srchsongst");
-            if (songSheets != null) {
-                Element element = songSheets.get(0);
-                for (Element ele : element.children()) {
-                    System.out.println(ele.text());
-                }
-
+        Elements songSheets = dom.getElementsByClass("srchsongst");
+        if (songSheets != null) {
+            Element element = songSheets.get(0);
+            for (Element ele : element.children()) {
+                System.out.println(ele.text());
             }
-
-        } catch (IOException e) {
-            logger.error("io exception:", e);
-        } catch (Exception e) {
-            logger.error(String.format("获取网易音乐数据时出现异常，url %s", bufferUrl), e);
         }
+
         return null;
     }
 
