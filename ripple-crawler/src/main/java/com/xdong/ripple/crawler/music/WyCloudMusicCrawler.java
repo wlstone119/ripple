@@ -1,31 +1,21 @@
 package com.xdong.ripple.crawler.music;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.xdong.ripple.common.crawler.SupplementErrorTask;
 import com.xdong.ripple.common.enums.CrawlerMusicTaskTypeEnum;
 import com.xdong.ripple.crawler.common.Constant;
+import com.xdong.ripple.crawler.common.CrawlerResultDto;
 import com.xdong.ripple.crawler.common.CrawlerUtil;
-import com.xdong.ripple.crawler.common.ParamVo;
-import com.xdong.ripple.crawler.strategy.CrawlerCompensateInterface;
-import com.xdong.ripple.crawler.strategy.CrawlerStrategyInterface;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
-import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
 
 /**
  * 类WyCloudMusicCrawler.java的实现描述：TODO 类实现描述
@@ -33,77 +23,32 @@ import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
  * @author wanglei Mar 24, 2019 9:21:38 PM
  */
 @Service
-public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCompensateInterface {
+public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 
-    private static Logger          logger    = Logger.getLogger(WyCloudMusicCrawler.class);
-
-    private static String          domainUrl = "";
-
-    @Autowired
-    private IRpCrawlerSongsService rpSongsServiceImpl;
-
-    @Autowired
-    private CompensateTaskExecutor taskExecutor;
+    private static Logger logger = Logger.getLogger(WyCloudMusicCrawler.class);
 
     @Override
-    public Object execute(ParamVo paramVo) {
-        List<String> resultList = new ArrayList<String>();
-
-        String url = paramVo.getUrl();
-        domainUrl = paramVo.getDomainUrl();
-
-        int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
-        int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
-        ExecutorService service = null;
-
-        try {
-            service = Executors.newCachedThreadPool();
-
-            ArrayList<FutureTask<String>> list = new ArrayList<FutureTask<String>>();
-            for (int i = begin; i < end; i++) {
-                FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskCallable(url,
-                                                                                                      (i * 35) + ""));
-                list.add(task);
-            }
-
-            for (FutureTask<String> task : list) {
-                try {
-                    resultList.add(task.get());
-                } catch (Exception e) {
-                    logger.error("线程任务执行异常", e);
-                }
-            }
-        } finally {
-            if (service != null) {
-                service.shutdown();
-                logger.info("关闭线程池!");
-
-                synchronized (taskExecutor.lockMonitor) {
-                    taskExecutor.lockMonitor.notify();
-                }
-            }
-        }
-
-        return resultList;
+    public CrawlerResultDto getResultByCrawlerUrl(String url) {
+        CrawlerResultDto resultDto = new CrawlerResultDto();
+        getWyMusicByCat(url, resultDto);
+        return resultDto;
     }
 
-    private class ExecuteTaskCallable implements Callable<String> {
+    @Override
+    public String getCrawlerUrlByDataUrl(String url, int page) {
+        String offset = String.valueOf(page * 35);
+        return (url.contains("offset")) ? url.replaceAll("offset", offset) : url + "&offset=" + offset;
+    }
 
-        private String url;
+    @Override
+    public boolean songSheetUrlCompensate(SupplementErrorTask task) {
+        getWyMusicByCat(task.getTaskUrl(), null);
+        return true;
+    }
 
-        public ExecuteTaskCallable(String url, String offset){
-            this.url = modifyWangyiUrl(url, offset);
-        }
-
-        private String modifyWangyiUrl(String url, String offset) {
-            return (url.contains("offset")) ? url.replaceAll("offset", offset) : url + "&offset=" + offset;
-        }
-
-        @Override
-        public String call() {
-            return getWyMusicByCat(url);
-        }
-
+    @Override
+    public boolean songUrlCompensate(SupplementErrorTask task) {
+        return false;
     }
 
     /**
@@ -111,7 +56,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCom
      * 
      * @param url
      */
-    private String getWyMusicByCat(String url) {
+    public String getWyMusicByCat(String url, CrawlerResultDto resultDto) {
         Document dom = CrawlerUtil.connectUrl(url);
         if (dom == null) {
             logger.error("线程：【" + Thread.currentThread().getName() + "】-> 未获取到网页信息，终止爬虫，url:" + url);
@@ -119,13 +64,15 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCom
             taskExecutor.errorUrlQueue.add(new SupplementErrorTask(this.getClass().getName(),
                                                                    CrawlerMusicTaskTypeEnum.SONGSHEET, url));
 
+            logger.info("待补单队列信息：" + JSON.toJSONString(taskExecutor.errorUrlQueue));
+
             return url + "【NULL PAGE】";
         }
 
         Element songSheets = dom.getElementById("m-pl-container");
         if (songSheets != null) {
             for (Element songSheet : songSheets.children()) {
-                loopSongSheet(songSheet);
+                loopSongSheet(songSheet, resultDto);
             }
         }
 
@@ -138,7 +85,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCom
      * @param root
      * @throws IOException
      */
-    private void loopSongSheet(Element songSheet) {
+    private void loopSongSheet(Element songSheet, CrawlerResultDto resultDto) {
         if (songSheet.hasAttr("href") && songSheet.hasAttr("title")
             && ("tit f-thide s-fc0".equals(songSheet.attr("class")))) {// <a>标签
             String songUrl = songSheet.attr("href").trim();// 歌单url
@@ -152,12 +99,12 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCom
             Elements songSheetDiv = songs.getElementsByClass("cntc");
             Elements songsList = songsDiv.getElementsByTag("ul");
             if (songsList != null) {
-                writeToDB(songsList, songSheetDiv.get(0));
+                writeToDB(songsList, songSheetDiv.get(0), resultDto);
             }
         } else {
             if (!songSheet.children().isEmpty()) {
                 for (Element element : songSheet.children()) {
-                    loopSongSheet(element);
+                    loopSongSheet(element, resultDto);
                 }
             }
         }
@@ -169,7 +116,7 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCom
      * @param musicTr
      * @throws IOException
      */
-    private void writeToDB(Elements songsList, Element songSheetDiv) {
+    private void writeToDB(Elements songsList, Element songSheetDiv, CrawlerResultDto resultDto) {
 
         RpCrawlerSongsDo songDo = new RpCrawlerSongsDo();
         songDo.setcTime(new Date());
@@ -202,7 +149,10 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCom
             Long songId = Long.parseLong(href.substring(href.indexOf("=") + 1, href.length()));
 
             if (rpSongsServiceImpl.checkSongIdExists(songId, Constant.CRAWLER_RESOURCE_WANGYI)) {
-                //logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
+                // logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
+                if (resultDto != null) {
+                    resultDto.setRepatCount(resultDto.getRepatCount() + 1);
+                }
                 continue;
             }
 
@@ -240,6 +190,10 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCom
             rpSongsServiceImpl.insert(songDo);
 
             logger.info("已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
+
+            if (resultDto != null) {
+                resultDto.setInsertCount(resultDto.getInsertCount() + 1);
+            }
         }
 
     }
@@ -265,17 +219,5 @@ public class WyCloudMusicCrawler implements CrawlerStrategyInterface, CrawlerCom
         return "<iframe frameborder=\"no\" border=\"0\" marginwidth=\"0\" "
                + "marginheight=\"0\" width=330 height=86 src=\"//music.163.com/outchain/player?type=2&id=" + id
                + "&auto=1&height=66\"></iframe>";
-    }
-
-    @Override
-    public boolean songSheetUrlCompensate(SupplementErrorTask task) {
-        getWyMusicByCat(task.getTaskUrl());
-        return true;
-    }
-
-    @Override
-    public boolean songUrlCompensate(SupplementErrorTask task) {
-
-        return false;
     }
 }

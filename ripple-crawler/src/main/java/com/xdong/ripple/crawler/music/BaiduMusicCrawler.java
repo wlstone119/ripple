@@ -1,112 +1,75 @@
 package com.xdong.ripple.crawler.music;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xdong.ripple.common.crawler.SupplementErrorTask;
 import com.xdong.ripple.common.enums.CrawlerMusicTaskTypeEnum;
 import com.xdong.ripple.crawler.common.Constant;
+import com.xdong.ripple.crawler.common.CrawlerResultDto;
 import com.xdong.ripple.crawler.common.CrawlerUtil;
-import com.xdong.ripple.crawler.common.ParamVo;
-import com.xdong.ripple.crawler.strategy.CrawlerCompensateInterface;
-import com.xdong.ripple.crawler.strategy.CrawlerStrategyInterface;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
-import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
 
 /**
  * 类BaiduMusicCrawler.java的实现描述：TODO 类实现描述
- * 
  * @author wanglei Mar 24, 2019 9:18:55 PM
  */
 @Service
-public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompensateInterface {
+public class BaiduMusicCrawler extends AbstractMusicCrawler {
 
-    private static Logger          logger    = Logger.getLogger(BaiduMusicCrawler.class);
-
-    private static String          domainUrl = "";
-
-    @Autowired
-    private IRpCrawlerSongsService rpSongsServiceImpl;
-
-    @Autowired
-    private CompensateTaskExecutor taskExecutor;
+    private static Logger logger = Logger.getLogger(BaiduMusicCrawler.class);
 
     @Override
-    public Object execute(ParamVo paramVo) {
-        final String url = paramVo.getUrl();
-
-        domainUrl = paramVo.getDomainUrl();
-
-        int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
-        int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
-
-        ExecutorService service = null;
-        List<String> resultList = new ArrayList<String>();
-
-        try {
-            ArrayList<FutureTask<String>> taskList = new ArrayList<FutureTask<String>>();
-            service = Executors.newCachedThreadPool();
-
-            for (int i = begin; i < end; i++) {
-                FutureTask<String> task = (FutureTask<String>) service.submit(new ExecuteTaskRunnable(url,
-                                                                                                      (i * 20) + ""));
-                taskList.add(task);
-            }
-
-            for (FutureTask<String> task : taskList) {
-                try {
-                    resultList.add(task.get());
-                } catch (InterruptedException | ExecutionException e) {
-                    logger.error("线程任务执行异常", e);
-                }
-            }
-        } finally {
-            if (service != null) {
-                service.shutdown();
-                logger.info("爬虫任务完成，关闭线程池！");
-
-                synchronized (taskExecutor.lockMonitor) {
-                    taskExecutor.lockMonitor.notify();
-                }
-            }
-        }
-
-        return resultList;
+    protected String getCrawlerUrlByDataUrl(String url, int page) {
+        String offset = String.valueOf(page * 20);
+        return (url.contains("offset")) ? url.replaceAll("offset", offset) : url + "&offset=" + offset;
     }
 
-    private class ExecuteTaskRunnable implements Callable<String> {
-
-        private String url;
-
-        public ExecuteTaskRunnable(String url, String offset){
-            this.url = modifyBaiduUrl(url, offset);
-        }
-
-        @Override
-        public String call() {
-            getBaiduHotTopMusic(url);
-            return url;
-        }
-
+    @Override
+    protected CrawlerResultDto getResultByCrawlerUrl(String url) {
+        CrawlerResultDto resultDto = new CrawlerResultDto();
+        getBaiduHotTopMusic(url, resultDto);
+        return resultDto;
     }
 
-    private String modifyBaiduUrl(String url, String offSet) {
-        return url.replace("$offset", offSet);
+    @Override
+    public boolean songSheetUrlCompensate(SupplementErrorTask task) {
+        getBaiduHotTopMusic(task.getTaskUrl(), null);
+        return true;
+    }
+
+    @Override
+    public boolean songUrlCompensate(SupplementErrorTask task) {
+        Document songs = CrawlerUtil.connectUrl(task.getTaskUrl());
+        if (songs == null) {
+            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 补单未获取到网页信息，终止爬虫，url:" + task.getTaskUrl());
+
+            // 放入补单队列
+            SupplementErrorTask errorTask = new SupplementErrorTask(this.getClass().getName(),
+                                                                    CrawlerMusicTaskTypeEnum.SONGS, task.getTaskUrl());
+            errorTask.setRetryCount(task.getRetryCount() + 1);
+            taskExecutor.errorUrlQueue.add(errorTask);
+
+            return false;
+        }
+
+        Elements mainBody = songs.getElementsByClass("main-body");
+        if (mainBody.isEmpty()) {
+            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 补单未获取到百度歌曲信息，url:" + task.getTaskUrl());
+            return false;
+        }
+
+        // 收录歌曲信息
+        executeSongUrl(songs, null);
+
+        return true;
     }
 
     /**
@@ -114,7 +77,7 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompe
      * 
      * @param url
      */
-    public void getBaiduHotTopMusic(String url) {
+    public void getBaiduHotTopMusic(String url, CrawlerResultDto resultDto) {
         logger.info("线程：【" + Thread.currentThread().getName() + "】-> 开始爬取，url:" + url);
 
         Document dom = CrawlerUtil.connectUrl(url);
@@ -132,7 +95,7 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompe
             Element songSheets = uls.get(0);
             for (Element songSheet : songSheets.children()) {
                 try {
-                    loopSongSheet(songSheet);
+                    loopSongSheet(songSheet, resultDto);
                 } catch (Exception e) {
                     logger.warn(String.format("线程：【" + Thread.currentThread().getName() + "】爬取歌单时出现异常: %s",
                                               appendUrl(songSheet.getElementsByTag("a").attr("href"))),
@@ -148,7 +111,7 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompe
      * @param root
      * @throws IOException
      */
-    private void loopSongSheet(Element root) throws IOException {
+    private void loopSongSheet(Element root, CrawlerResultDto resultDto) throws IOException {
         Elements elements = root.children();
         for (Element ele : elements) {
             if (ele.hasClass("text-title")) {
@@ -194,7 +157,7 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompe
                             }
 
                             // 收录歌曲信息
-                            executeSongUrl(songs);
+                            executeSongUrl(songs, resultDto);
 
                             offset += 20;
                         }
@@ -204,7 +167,7 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompe
         }
     }
 
-    private void executeSongUrl(Document songs) {
+    private void executeSongUrl(Document songs, CrawlerResultDto resultDto) {
 
         Elements songSheetEle = songs.getElementsByClass("songlist-info-inside");
         Elements musicTbody = songs.getElementsByClass("song-list-wrap");
@@ -232,7 +195,10 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompe
                     }
 
                     if (rpSongsServiceImpl.checkSongIdExists(songDo.getSongId(), Constant.CRAWLER_RESOURCE_BAIDU)) {
-                        //logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_BAIDU + "-" + songDo.getSongId());
+                        // logger.info("撞库成功，已存在：" + Constant.CRAWLER_RESOURCE_BAIDU + "-" + songDo.getSongId());
+                        if (resultDto != null) {
+                            resultDto.setRepatCount(resultDto.getRepatCount() + 1);
+                        }
                         continue;
                     }
 
@@ -240,6 +206,9 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompe
 
                     logger.info("已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_BAIDU + "-"
                                 + songDo.getSongId());
+                    if (resultDto != null) {
+                        resultDto.setInsertCount(resultDto.getInsertCount() + 1);
+                    }
                 }
             }
         }
@@ -321,38 +290,4 @@ public class BaiduMusicCrawler implements CrawlerStrategyInterface, CrawlerCompe
     private String appendUrl(String url) {
         return domainUrl + url;
     }
-
-    @Override
-    public boolean songSheetUrlCompensate(SupplementErrorTask task) {
-        getBaiduHotTopMusic(task.getTaskUrl());
-        return true;
-    }
-
-    @Override
-    public boolean songUrlCompensate(SupplementErrorTask task) {
-        Document songs = CrawlerUtil.connectUrl(task.getTaskUrl());
-        if (songs == null) {
-            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 补单未获取到网页信息，终止爬虫，url:" + task.getTaskUrl());
-
-            // 放入补单队列
-            SupplementErrorTask errorTask = new SupplementErrorTask(this.getClass().getName(),
-                                                                    CrawlerMusicTaskTypeEnum.SONGS, task.getTaskUrl());
-            errorTask.setRetryCount(task.getRetryCount() + 1);
-            taskExecutor.errorUrlQueue.add(errorTask);
-
-            return false;
-        }
-
-        Elements mainBody = songs.getElementsByClass("main-body");
-        if (mainBody.isEmpty()) {
-            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 补单未获取到百度歌曲信息，url:" + task.getTaskUrl());
-            return false;
-        }
-
-        // 收录歌曲信息
-        executeSongUrl(songs);
-
-        return true;
-    }
-
 }

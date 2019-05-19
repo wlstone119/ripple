@@ -1,6 +1,7 @@
 package com.xdong.ripple.mvc;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,11 +26,14 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.xdong.ripple.common.crawler.CrawlerSearchSongVo;
 import com.xdong.ripple.commonservice.annotation.Log;
+import com.xdong.ripple.crawler.common.CrawlerResultVo;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyClient;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
+import com.xdong.ripple.dal.entity.crawler.RpCrawlerTaskDo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
+import com.xdong.ripple.spi.crawler.IRpCrawlerTaskService;
 import com.xdong.ripple.spi.crawler.IRpCrawlerUrlService;
 
 @Controller
@@ -44,6 +49,9 @@ public class CrawlerController extends BaseController {
 
     @Autowired
     private IRpCrawlerUrlService   rpCrawlerUrlServiceImpl;
+
+    @Autowired
+    private IRpCrawlerTaskService  rpCrawlerTaskServiceImpl;
 
     @Autowired
     private CrawlerStrategyClient  crawlerStrategyClient;
@@ -150,7 +158,8 @@ public class CrawlerController extends BaseController {
     @ResponseBody
     public Object crawl(ParamVo paramVo) {
         try {
-            return crawlerStrategyClient.execute(paramVo);
+            CrawlerResultVo resultVo = crawlerStrategyClient.execute(paramVo);
+            return resultVo.getResultList();
         } catch (Exception e) {
             logger.error("爬虫任务调度时出现异常", e);
             return false;

@@ -19,6 +19,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.xdong.ripple.crawler.common.CrawlerResultVo;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyInterface;
 
@@ -37,7 +38,7 @@ public class StoryCrawler implements CrawlerStrategyInterface {
     private String        storyPath;
 
     @Override
-    public List<String> execute(ParamVo paramVo) {
+    public CrawlerResultVo execute(ParamVo paramVo) {
         try {
             domainUrl = paramVo.getDomainUrl();
             return crawls(paramVo.getUrl(), paramVo.getBegin(), paramVo.getEnd());
@@ -48,7 +49,10 @@ public class StoryCrawler implements CrawlerStrategyInterface {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List<String> crawls(final String url, int begin, int end) throws Exception {
+    public CrawlerResultVo crawls(final String url, int begin, int end) throws Exception {
+
+        CrawlerResultVo resultVo = new CrawlerResultVo();
+
         logger.info("抓取任务开始...");
         long t0 = System.currentTimeMillis();
 
@@ -98,7 +102,9 @@ public class StoryCrawler implements CrawlerStrategyInterface {
 
         logger.info("抓取任务结束... 耗时：" + (System.currentTimeMillis() - t0) / 1000 + "秒");
 
-        return resultList;
+        resultVo.setResultList(resultList);
+
+        return resultVo;
     }
 
     public void crawlFirstStory(String url) throws Exception {

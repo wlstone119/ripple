@@ -22,6 +22,8 @@ public class ParamVo {
     private String modelName;
     
     private Integer limitPage;
+    
+    private String streatyClassName;
 
     public String getSearchKey() {
         return searchKey;
@@ -86,4 +88,14 @@ public class ParamVo {
     public void setLimitPage(Integer limit) {
         this.limitPage = limit;
     }
+
+    
+    public String getStreatyClassName() {
+        return streatyClassName;
+    }
+    
+    public void setStreatyClassName(String streatyClassName) {
+        this.streatyClassName = streatyClassName;
+    }
+    
 }

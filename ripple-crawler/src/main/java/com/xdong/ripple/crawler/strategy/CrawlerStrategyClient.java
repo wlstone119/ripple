@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.xdong.ripple.common.BizException;
 import com.xdong.ripple.common.utils.HttpUtil;
 import com.xdong.ripple.common.utils.SpringUtil;
+import com.xdong.ripple.crawler.common.CrawlerResultVo;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerUrlService;
@@ -35,7 +36,7 @@ public class CrawlerStrategyClient {
      * @param paramVo
      * @throws BizException
      */
-    public Object execute(ParamVo paramVo) throws BizException {
+    public CrawlerResultVo execute(ParamVo paramVo) throws BizException {
         Long urlKey = paramVo.getUrlKey();
         if (urlKey == null || urlKey <= 0) {
             throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
@@ -45,6 +46,7 @@ public class CrawlerStrategyClient {
         paramVo.setUrl(urlDo.getCrawlerUrl());
         paramVo.setDomainUrl(urlDo.getDomainName());
         paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
+        paramVo.setStreatyClassName(urlDo.getCrawlerClass());
         CrawlerStrategyInterface strategy = (CrawlerStrategyInterface) SpringUtil.getBeansByName(urlDo.getCrawlerClass());
 
         return strategy.execute(paramVo);

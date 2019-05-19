@@ -1,5 +1,6 @@
 package com.xdong.ripple.crawler.strategy;
 
+import com.xdong.ripple.crawler.common.CrawlerResultVo;
 import com.xdong.ripple.crawler.common.ParamVo;
 
 /**
@@ -10,6 +11,6 @@ import com.xdong.ripple.crawler.common.ParamVo;
 public interface CrawlerStrategyInterface {
 
     // 爬虫的执行方法体
-    public Object execute(ParamVo paramVo);
+    public CrawlerResultVo execute(ParamVo paramVo);
 
 }

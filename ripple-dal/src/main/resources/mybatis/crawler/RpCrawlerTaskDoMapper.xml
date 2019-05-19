@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xdong.ripple.dal.mapper.crawler.RpCrawlerTaskDoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xdong.ripple.dal.entity.crawler.RpCrawlerTaskDo">
+        <id column="id" property="id" />
+        <result column="url_id" property="urlId" />
+        <result column="insert_count" property="insertCount" />
+        <result column="repeat_count" property="repeatCount" />
+        <result column="strat_thread_count" property="stratThreadCount" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="consumer_time" property="consumerTime" />
+        <result column="c_time" property="cTime" />
+        <result column="c_user" property="cUser" />
+        <result column="m_time" property="mTime" />
+        <result column="m_user" property="mUser" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, url_id AS urlId, insert_count AS insertCount, repeat_count AS repeatCount, strat_thread_count AS stratThreadCount, start_time AS startTime, end_time AS endTime, consumer_time AS consumerTime, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser
+    </sql>
+
+</mapper>

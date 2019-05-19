@@ -13,6 +13,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
+import com.xdong.ripple.crawler.common.CrawlerResultVo;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyInterface;
 
@@ -29,7 +30,7 @@ public class SinaNewsCrawler implements CrawlerStrategyInterface {
     private String        newsPath;
 
     @Override
-    public Object execute(ParamVo paramVo) {
+    public CrawlerResultVo execute(ParamVo paramVo) {
         try {
             crawl(paramVo.getUrl());
         } catch (Exception e) {

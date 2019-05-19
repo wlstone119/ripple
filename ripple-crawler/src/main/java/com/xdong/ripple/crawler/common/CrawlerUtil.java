@@ -1,6 +1,8 @@
 package com.xdong.ripple.crawler.common;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -19,7 +21,7 @@ public class CrawlerUtil {
     private static Logger logger = Logger.getLogger(CrawlerUtil.class);
 
     public static Document connectUrl(String url) {
-        Long sleepTime = new RandomUtil().randomTime();
+        Long sleepTime = new RandomUtil().randomTime(url);
         logger.info("爬虫线程等待，休眠时间：" + sleepTime + "(ms), 等待执行的url：【" + url + "】");
         try {
             Thread.sleep(sleepTime);
