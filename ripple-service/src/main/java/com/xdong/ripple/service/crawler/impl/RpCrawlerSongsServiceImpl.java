@@ -43,8 +43,9 @@ public class RpCrawlerSongsServiceImpl extends MPServiceImpl<RpCrawlerSongsDoMap
         page.setSize(pageSize);
         Wrapper<RpCrawlerSongsDo> wrapper = new EntityWrapper<RpCrawlerSongsDo>();
         wrapper.eq("resource", type);
-        wrapper.addFilter("(instr(name,{0}) > 0 or instr(song_author,{0}) > 0 or instr(song_album, {0})  > 0)",
-                          queryKey);
+        wrapper.addFilter(" MATCH(name,song_author,song_album) AGAINST({0})", queryKey);
+//        wrapper.addFilter("(instr(name,{0}) > 0 or instr(song_author,{0}) > 0 or instr(song_album, {0})  > 0)",
+//                          queryKey);
 
         Page<RpCrawlerSongsDo> resultPage = this.selectPage(page, wrapper);
         if (resultPage != null && CollectionUtils.isNotEmpty(resultPage.getRecords())) {

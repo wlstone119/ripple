@@ -101,8 +101,10 @@ public class CrawlerController extends BaseController {
     public List<RpCrawlerUrlDo> getTableList(HttpServletRequest request) {
         List<RpCrawlerUrlDo> urlList = new ArrayList<RpCrawlerUrlDo>();
         Cookie[] cookies = request.getCookies();
+        String password = request.getParameter("password");
         for (Cookie var : cookies) {
-            if ("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue())) {
+            if (("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue()))
+                || "passwordiamaadmin".equals(password)) {
                 urlList = rpCrawlerUrlServiceImpl.selectList(new EntityWrapper<RpCrawlerUrlDo>());
             }
         }
@@ -176,5 +178,21 @@ public class CrawlerController extends BaseController {
             logger.error("新闻索引异常", e);
             return false;
         }
+    }
+
+    @RequestMapping(value = "/execute", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public Object execute(HttpServletRequest request, ParamVo paramVo) {
+        Cookie[] cookies = request.getCookies();
+        String password = request.getParameter("password");
+        for (Cookie var : cookies) {
+            if (("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue()))
+                || "passwordiamaadmin".equals(password)) {
+                CrawlerResultVo resultVo = crawlerStrategyClient.execute(paramVo);
+                return resultVo.getResultList();
+            }
+        }
+
+        return "success";
     }
 }
