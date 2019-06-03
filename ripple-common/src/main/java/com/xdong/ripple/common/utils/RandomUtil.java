@@ -17,7 +17,7 @@ public class RandomUtil {
         if (host.contains("music.baidu.com") || host.contains("music.taihe.com")) {
             return (long) (Math.random() * 3 * 1000);
         } else {
-            return (long) (Math.random() * 3 * 0);
+            return (long) (Math.random() * 3 * 500);
         }
     }
 
