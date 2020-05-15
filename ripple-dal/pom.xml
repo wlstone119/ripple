@@ -23,8 +23,8 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.weidai.mp.support</groupId>
-			<artifactId>mpweidai-support</artifactId>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-boot-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-validator</groupId>

@@ -1,7 +1,7 @@
 package com.xdong.ripple.dal.mapper.crawler;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
  * <p>

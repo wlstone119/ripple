@@ -30,7 +30,7 @@ public class MainGenerator {
         boolean isNeedController = true;
 
         for (String table_name : table_names) {
-            Generator.doGenerator(author, dir, project_url, tablePrefix, table_name, isNeedController);
+            //Generator.doGenerator(author, dir, project_url, tablePrefix, table_name, isNeedController);
         }
 
     }

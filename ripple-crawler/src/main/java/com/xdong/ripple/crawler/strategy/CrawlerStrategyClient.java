@@ -27,62 +27,66 @@ import com.xdong.ripple.spi.crawler.IRpCrawlerUrlService;
 @Service
 public class CrawlerStrategyClient {
 
-    @Autowired
-    private IRpCrawlerUrlService rpCrawlerUrlServiceImpl;
+	@Autowired
+	private IRpCrawlerUrlService rpCrawlerUrlServiceImpl;
 
-    /**
-     * 策略模式执行者帮你自动选择策略进行执行
-     * 
-     * @param paramVo
-     * @throws BizException
-     */
-    public CrawlerResultVo execute(ParamVo paramVo) throws BizException {
-        Long urlKey = paramVo.getUrlKey();
-        if (urlKey == null || urlKey <= 0) {
-            throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
-        }
+	/**
+	 * 策略模式执行者帮你自动选择策略进行执行
+	 * 
+	 * @param paramVo
+	 * @throws BizException
+	 */
+	public CrawlerResultVo execute(ParamVo paramVo) throws BizException {
 
-        RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(urlKey);
-        paramVo.setUrl(urlDo.getCrawlerUrl());
-        paramVo.setDomainUrl(urlDo.getDomainName());
-        paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
-        paramVo.setStreatyClassName(urlDo.getCrawlerClass());
-        CrawlerStrategyInterface strategy = (CrawlerStrategyInterface) SpringUtil.getBeansByName(urlDo.getCrawlerClass());
+		Long urlKey = paramVo.getUrlKey();
 
-        return strategy.execute(paramVo);
-    }
+		if (urlKey == null || urlKey <= 0) {
+			throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
+		}
 
-    private Integer getLimit(String crawlerUrl) {
-        URL url;
-        try {
-            url = new URL(crawlerUrl);
-            Map<String, String> paramObj = HttpUtil.splitQueryString(url.getQuery());
-            if (paramObj.get("limitFlag") != null) {
-                return Integer.parseInt(paramObj.get("limitFlag"));
-            }
-        } catch (MalformedURLException e) {
-            throw BizException.create(String.format("param error: %s", crawlerUrl));
-        }
-        return null;
-    }
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(urlKey);
+		paramVo.setUrl(urlDo.getCrawlerUrl());
+		paramVo.setDomainUrl(urlDo.getDomainName());
+		paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
+		paramVo.setStreatyClassName(urlDo.getCrawlerClass());
 
-    /**
-     * 策略模式执行者帮你自动选择策略进行执行
-     * 
-     * @param paramVo
-     * @throws BizException
-     */
-    public Object search(ParamVo paramVo) throws BizException {
+		CrawlerStrategyInterface strategy = (CrawlerStrategyInterface) SpringUtil
+				.getBeansByName(urlDo.getCrawlerClass());
 
-        if (StringUtils.isBlank(paramVo.getSearchKey())) {
-            throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
-        }
+		return strategy.execute(paramVo);
+	}
 
-        RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getCrawlerUrlRecord("search", paramVo.getModelName());
-        paramVo.setUrl(String.format(urlDo.getCrawlerUrl(), paramVo.getSearchKey()));
-        paramVo.setDomainUrl(urlDo.getDomainName());
-        CrawlerSearchInterface strategy = (CrawlerSearchInterface) SpringUtil.getBeansByName(urlDo.getCrawlerClass());
+	private Integer getLimit(String crawlerUrl) {
+		URL url;
+		try {
+			url = new URL(crawlerUrl);
+			Map<String, String> paramObj = HttpUtil.splitQueryString(url.getQuery());
+			if (paramObj.get("limitFlag") != null) {
+				return Integer.parseInt(paramObj.get("limitFlag"));
+			}
+		} catch (MalformedURLException e) {
+			throw BizException.create(String.format("param error: %s", crawlerUrl));
+		}
+		return null;
+	}
 
-        return strategy.search(paramVo);
-    }
+	/**
+	 * 策略模式执行者帮你自动选择策略进行执行
+	 * 
+	 * @param paramVo
+	 * @throws BizException
+	 */
+	public Object search(ParamVo paramVo) throws BizException {
+
+		if (StringUtils.isBlank(paramVo.getSearchKey())) {
+			throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
+		}
+
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getCrawlerUrlRecord("search", paramVo.getModelName());
+		paramVo.setUrl(String.format(urlDo.getCrawlerUrl(), paramVo.getSearchKey()));
+		paramVo.setDomainUrl(urlDo.getDomainName());
+		CrawlerSearchInterface strategy = (CrawlerSearchInterface) SpringUtil.getBeansByName(urlDo.getCrawlerClass());
+
+		return strategy.search(paramVo);
+	}
 }

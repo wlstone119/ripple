@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import com.xdong.ripple.commonservice.annotation.DecryptSecurity;
 import com.xdong.ripple.commonservice.annotation.EncryptSecurity;
 import com.xdong.ripple.commonservice.util.ReflectionUtil;
-import com.xdong.ripple.commonservice.util.SecurityUtil;
 import com.xdong.ripple.dal.entity.system.RpSysUserDo;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })

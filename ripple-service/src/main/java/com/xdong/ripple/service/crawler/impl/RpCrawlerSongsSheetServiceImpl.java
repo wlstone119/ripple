@@ -1,9 +1,9 @@
 package com.xdong.ripple.service.crawler.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsSheetDo;
 import com.xdong.ripple.dal.mapper.crawler.RpCrawlerSongsSheetDoMapper;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsSheetService;
-import com.weidai.mp.support.service.impl.MPServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 2019-03-20
  */
 @Service
-public class RpCrawlerSongsSheetServiceImpl extends MPServiceImpl<RpCrawlerSongsSheetDoMapper, RpCrawlerSongsSheetDo> implements IRpCrawlerSongsSheetService {
+public class RpCrawlerSongsSheetServiceImpl extends ServiceImpl<RpCrawlerSongsSheetDoMapper, RpCrawlerSongsSheetDo>
+		implements IRpCrawlerSongsSheetService {
 
 }

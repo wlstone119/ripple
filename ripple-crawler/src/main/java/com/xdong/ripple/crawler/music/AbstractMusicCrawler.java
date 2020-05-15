@@ -30,128 +30,128 @@ import com.xdong.ripple.spi.crawler.IRpCrawlerTaskService;
  */
 public abstract class AbstractMusicCrawler implements CrawlerStrategyInterface, CrawlerCompensateInterface {
 
-    private static Logger         logger = Logger.getLogger(AbstractMusicCrawler.class);
+	private static Logger logger = Logger.getLogger(AbstractMusicCrawler.class);
 
-    protected String              domainUrl;
+	protected String domainUrl;
 
-    @Autowired
-    CompensateTaskExecutor        taskExecutor;
+	@Autowired
+	CompensateTaskExecutor taskExecutor;
 
-    @Autowired
-    IRpCrawlerSongsService        rpSongsServiceImpl;
+	@Autowired
+	IRpCrawlerSongsService rpSongsServiceImpl;
 
-    @Autowired
-    private IRpCrawlerTaskService rpCrawlerTaskServiceImpl;
+	@Autowired
+	private IRpCrawlerTaskService rpCrawlerTaskServiceImpl;
 
-    protected abstract String getCrawlerUrlByDataUrl(String url, int page);
+	protected abstract String getCrawlerUrlByDataUrl(String url, int page);
 
-    protected abstract CrawlerResultDto getResultByCrawlerUrl(String url);
+	protected abstract CrawlerResultDto getResultByCrawlerUrl(String url);
 
-    @Override
-    public CrawlerResultVo execute(ParamVo paramVo) {
+	@Override
+	public CrawlerResultVo execute(ParamVo paramVo) {
 
-        domainUrl = paramVo.getDomainUrl();
+		domainUrl = paramVo.getDomainUrl();
 
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 
-        RpCrawlerTaskDo taskDo = new RpCrawlerTaskDo();
-        taskDo.setUrlId(paramVo.getUrlKey());
-        taskDo.setStartTime(new Date());
-        taskDo.setcTime(new Date());
-        taskDo.setcUser("system");
-        taskDo.setmTime(new Date());
-        taskDo.setmUser("system");
-        rpCrawlerTaskServiceImpl.insert(taskDo);
+		RpCrawlerTaskDo taskDo = new RpCrawlerTaskDo();
+		taskDo.setUrlId(paramVo.getUrlKey());
+		taskDo.setStartTime(new Date());
+		taskDo.setcTime(new Date());
+		taskDo.setcUser("system");
+		taskDo.setmTime(new Date());
+		taskDo.setmUser("system");
+		rpCrawlerTaskServiceImpl.save(taskDo);
 
-        CrawlerResultVo resultVo = mulitThreadExecute(paramVo);
+		CrawlerResultVo resultVo = mulitThreadExecute(paramVo);
 
-        taskDo.setConsumerTime((int) stopWatch.getTotalTimeSeconds());
-        taskDo.setInsertCount(resultVo.getInsertCount());
-        taskDo.setRepeatCount(resultVo.getRepeatCount());
-        taskDo.setStratThreadCount(resultVo.getStratThreadCount());
-        taskDo.setEndTime(new Date());
+		taskDo.setConsumerTime((int) stopWatch.getTotalTimeSeconds());
+		taskDo.setInsertCount(resultVo.getInsertCount());
+		taskDo.setRepeatCount(resultVo.getRepeatCount());
+		taskDo.setStratThreadCount(resultVo.getStratThreadCount());
+		taskDo.setEndTime(new Date());
 
-        stopWatch.stop();
-        rpCrawlerTaskServiceImpl.updateById(taskDo);
+		stopWatch.stop();
+		rpCrawlerTaskServiceImpl.updateById(taskDo);
 
-        return resultVo;
-    }
+		return resultVo;
+	}
 
-    public CrawlerResultVo mulitThreadExecute(ParamVo paramVo) {
+	public CrawlerResultVo mulitThreadExecute(ParamVo paramVo) {
 
-        CrawlerResultVo resultVo = new CrawlerResultVo();
+		CrawlerResultVo resultVo = new CrawlerResultVo();
 
-        // 启动线程数量
-        int stratThreadCount = 0;
+		// 启动线程数量
+		int stratThreadCount = 0;
 
-        // 任务参数
-        resultVo.setParamVo(paramVo);
+		// 任务参数
+		resultVo.setParamVo(paramVo);
 
-        List<CrawlerResultDto> resultList = new ArrayList<CrawlerResultDto>();
+		List<CrawlerResultDto> resultList = new ArrayList<CrawlerResultDto>();
 
-        int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
-        int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
-        ExecutorService service = null;
+		int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
+		int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
+		ExecutorService service = null;
 
-        try {
-            service = Executors.newCachedThreadPool();
+		try {
+			service = Executors.newCachedThreadPool();
 
-            // 一页url启动一个线程去爬取数据
-            List<FutureTask<CrawlerResultDto>> list = new ArrayList<FutureTask<CrawlerResultDto>>();
-            for (int i = begin; i < end; i++) {
-                stratThreadCount++;
-                FutureTask<CrawlerResultDto> task = (FutureTask<CrawlerResultDto>) service.submit(new CrawlerCallable(paramVo,
-                                                                                                                      i));
-                list.add(task);
-            }
+			// 一页url启动一个线程去爬取数据
+			List<FutureTask<CrawlerResultDto>> list = new ArrayList<FutureTask<CrawlerResultDto>>();
+			for (int i = begin; i < end; i++) {
+				stratThreadCount++;
+				FutureTask<CrawlerResultDto> task = (FutureTask<CrawlerResultDto>) service
+						.submit(new CrawlerCallable(paramVo, i));
+				list.add(task);
+			}
 
-            // 任务启动线程数
-            resultVo.setStratThreadCount(stratThreadCount);
+			// 任务启动线程数
+			resultVo.setStratThreadCount(stratThreadCount);
 
-            for (FutureTask<CrawlerResultDto> task : list) {
-                try {
-                    resultList.add(task.get());
-                } catch (Exception e) {
-                    logger.error("线程任务执行异常,任务信息:" + JSON.toJSONString(task), e);
-                }
-            }
-        } finally {
-            if (service != null) {
-                service.shutdown();
-                logger.info("任务执行完毕，关闭线程池!");
+			for (FutureTask<CrawlerResultDto> task : list) {
+				try {
+					resultList.add(task.get());
+				} catch (Exception e) {
+					logger.error("线程任务执行异常,任务信息:" + JSON.toJSONString(task), e);
+				}
+			}
+		} finally {
+			if (service != null) {
+				service.shutdown();
+				logger.info("任务执行完毕，关闭线程池!");
 
-                // 唤醒补单线程执行异常任务url开始补单
-                synchronized (taskExecutor.lockMonitor) {
-                    taskExecutor.lockMonitor.notify();
-                }
-            }
-        }
+				// 唤醒补单线程执行异常任务url开始补单
+				synchronized (taskExecutor.lockMonitor) {
+					taskExecutor.lockMonitor.notify();
+				}
+			}
+		}
 
-        if (CollectionUtils.isNotEmpty(resultList)) {
-            List<String> resultUrlList = new ArrayList<String>();
+		if (CollectionUtils.isNotEmpty(resultList)) {
+			List<String> resultUrlList = new ArrayList<String>();
 
-            for (CrawlerResultDto resultDto : resultList) {
-                resultVo.setInsertCount(resultDto.getInsertCount() + resultVo.getInsertCount());
-                resultVo.setRepeatCount(resultDto.getRepatCount() + resultVo.getRepeatCount());
-                resultUrlList.add(resultDto.getUrl());
-            }
-        }
+			for (CrawlerResultDto resultDto : resultList) {
+				resultVo.setInsertCount(resultDto.getInsertCount() + resultVo.getInsertCount());
+				resultVo.setRepeatCount(resultDto.getRepatCount() + resultVo.getRepeatCount());
+				resultUrlList.add(resultDto.getUrl());
+			}
+		}
 
-        return resultVo;
-    }
+		return resultVo;
+	}
 
-    class CrawlerCallable implements Callable<CrawlerResultDto> {
+	class CrawlerCallable implements Callable<CrawlerResultDto> {
 
-        private String url;
+		private String url;
 
-        public CrawlerCallable(ParamVo paramVo, int page){
-            url = getCrawlerUrlByDataUrl(paramVo.getUrl(), page);
-        }
+		public CrawlerCallable(ParamVo paramVo, int page) {
+			url = getCrawlerUrlByDataUrl(paramVo.getUrl(), page);
+		}
 
-        @Override
-        public CrawlerResultDto call() {
-            return getResultByCrawlerUrl(url);
-        }
-    }
+		@Override
+		public CrawlerResultDto call() {
+			return getResultByCrawlerUrl(url);
+		}
+	}
 }

@@ -1,10 +1,9 @@
 package com.xdong.ripple.spi.system;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.xdong.ripple.dal.entity.system.RpSysDictDo;
 
 import java.util.List;
-
-import com.weidai.mp.support.service.IMPService;
 
 /**
  * <p>
@@ -14,14 +13,14 @@ import com.weidai.mp.support.service.IMPService;
  * @author wanglei
  * @since 2019-03-21
  */
-public interface IRpSysDictService extends IMPService<RpSysDictDo> {
+public interface IRpSysDictService extends IService<RpSysDictDo> {
 
-    /**
-     * 根据type获取数据
-     * 
-     * @param map
-     * @return
-     */
-    List<RpSysDictDo> listByType(String type);
+	/**
+	 * 根据type获取数据
+	 * 
+	 * @param map
+	 * @return
+	 */
+	List<RpSysDictDo> listByType(String type);
 
 }

@@ -1,7 +1,7 @@
 package com.xdong.ripple.spi.system;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.xdong.ripple.dal.entity.system.RpSysLogDo;
-import com.weidai.mp.support.service.IMPService;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.weidai.mp.support.service.IMPService;
  * @author wanglei
  * @since 2019-03-23
  */
-public interface IRpSysLogService extends IMPService<RpSysLogDo> {
+public interface IRpSysLogService extends IService<RpSysLogDo> {
 
 }

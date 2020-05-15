@@ -1,11 +1,11 @@
 package com.xdong.ripple.dal.mapper.system;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xdong.ripple.dal.entity.system.RpSysUserDo;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author wanglei

@@ -1,9 +1,9 @@
 package com.xdong.ripple.service.idol.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDo;
 import com.xdong.ripple.dal.mapper.idol.XdIdolHomeViewDoMapper;
 import com.xdong.ripple.spi.idol.IXdIdolHomeViewService;
-import com.weidai.mp.support.service.impl.MPServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 2019-03-20
  */
 @Service
-public class XdIdolHomeViewServiceImpl extends MPServiceImpl<XdIdolHomeViewDoMapper, XdIdolHomeViewDo> implements IXdIdolHomeViewService {
+public class XdIdolHomeViewServiceImpl extends ServiceImpl<XdIdolHomeViewDoMapper, XdIdolHomeViewDo>
+		implements IXdIdolHomeViewService {
 
 }

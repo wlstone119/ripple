@@ -162,19 +162,9 @@
 
 			<!-- mybatisplus -->
 			<dependency>
-				<groupId>com.weidai.mp.support</groupId>
-				<artifactId>mpweidai-support</artifactId>
-				<version>1.0.6</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-autoconfigure</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-configuration-processor</artifactId>
-					</exclusion>
-				</exclusions>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-boot-starter</artifactId>
+				<version>3.3.1.tmp</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.shiro</groupId>
@@ -204,7 +194,7 @@
 				<artifactId>commons-codec</artifactId>
 				<version>1.9</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.apache.shardingsphere</groupId>
 				<artifactId>sharding-jdbc-core</artifactId>

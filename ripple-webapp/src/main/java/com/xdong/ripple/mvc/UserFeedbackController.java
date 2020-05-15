@@ -28,20 +28,23 @@ import org.springframework.stereotype.Controller;
 @RequestMapping("/userBack")
 public class UserFeedbackController extends BaseController {
 
-    private static final Logger       logger = LogManager.getLogger(UserFeedbackController.class);
+	private static final Logger logger = LogManager.getLogger(UserFeedbackController.class);
 
-    @Autowired
-    private IRpSysUserFeedbackService rpSysUserFeedbackServiceImpl;
+	@Autowired
+	private IRpSysUserFeedbackService rpSysUserFeedbackServiceImpl;
 
-    @RequestMapping(value = "/save", method = { RequestMethod.POST })
-    @ResponseBody
-    public Object saveUserFeed(RpSysUserFeedbackDo feeback) {
-        if (StringUtils.isBlank(feeback.getMobile()) && StringUtils.isBlank(feeback.getEmailAddress())) {
-            logger.warn("用户反馈信息时参数错误:" + JSON.toJSONString(feeback));
-            return getErrResult(IErrorEnum.USER_FEED_FORMAT_ERROR);
-        }
-        rpSysUserFeedbackServiceImpl.insert(feeback);
-        return getResult(true);
-    }
+	@RequestMapping(value = "/save", method = { RequestMethod.POST })
+	@ResponseBody
+	public Object saveUserFeed(RpSysUserFeedbackDo feeback) {
+
+		if (StringUtils.isBlank(feeback.getMobile()) && StringUtils.isBlank(feeback.getEmailAddress())) {
+			logger.warn("用户反馈信息时参数错误:" + JSON.toJSONString(feeback));
+			return getErrResult(IErrorEnum.USER_FEED_FORMAT_ERROR);
+		}
+
+		rpSysUserFeedbackServiceImpl.save(feeback);
+
+		return getResult(true);
+	}
 
 }

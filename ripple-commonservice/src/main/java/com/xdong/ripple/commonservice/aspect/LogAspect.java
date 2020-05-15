@@ -83,6 +83,6 @@ public class LogAspect {
         sysLog.setGmtCreate(new Date());
 
         // 保存系统日志
-        rpSysLogServiceImpl.insert(sysLog);
+        rpSysLogServiceImpl.save(sysLog);
     }
 }

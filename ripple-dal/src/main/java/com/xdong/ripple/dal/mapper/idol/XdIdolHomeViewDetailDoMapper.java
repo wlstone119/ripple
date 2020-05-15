@@ -1,7 +1,7 @@
 package com.xdong.ripple.dal.mapper.idol;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDetailDo;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
  * <p>

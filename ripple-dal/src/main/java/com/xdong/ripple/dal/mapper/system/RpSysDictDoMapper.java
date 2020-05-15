@@ -1,7 +1,7 @@
 package com.xdong.ripple.dal.mapper.system;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xdong.ripple.dal.entity.system.RpSysDictDo;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
  * <p>

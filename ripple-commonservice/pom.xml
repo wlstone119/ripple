@@ -35,10 +35,6 @@
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.antgroup.zmxy</groupId>
-			<artifactId>openplatform.api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>

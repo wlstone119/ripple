@@ -1,7 +1,7 @@
 package com.xdong.ripple.spi.crawler;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
-import com.weidai.mp.support.service.IMPService;
 
 /**
  * <p>
@@ -11,8 +11,8 @@ import com.weidai.mp.support.service.IMPService;
  * @author wanglei
  * @since 2019-03-20
  */
-public interface IRpCrawlerUrlService extends IMPService<RpCrawlerUrlDo> {
+public interface IRpCrawlerUrlService extends IService<RpCrawlerUrlDo> {
 
-    RpCrawlerUrlDo getCrawlerUrlRecord(String type, String crawlerClss);
+	RpCrawlerUrlDo getCrawlerUrlRecord(String type, String crawlerClss);
 
 }
