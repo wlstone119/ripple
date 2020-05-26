@@ -4,7 +4,7 @@ server:
 
 spring:
     datasource:
-        url: jdbc:mysql://172.16.0.122:3306/ripple?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull
+        url: jdbc:mysql://172.16.0.122:3306/ripple?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&useSSL=true
         username: ripple
         password: Ky7eZZqsb!BccP9Bco
         filters: stat
