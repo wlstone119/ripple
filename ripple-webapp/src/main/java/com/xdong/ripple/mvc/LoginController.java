@@ -28,8 +28,9 @@ public class LoginController extends BaseController {
     private static final String prefix = "user";
 
     @GetMapping({ "/", "" })
-    public String portalIndex(Model model) {
-        return "/blog/index/main";
+    @ResponseBody
+    public Object portalIndex(Model model) {
+        return "success";
     }
 
     @GetMapping("/login")
