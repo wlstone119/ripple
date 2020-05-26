@@ -25,18 +25,18 @@
 <script type="text/javascript">
 	$(document).ready(function(){ 
 		$.ajax({
-				url : "/ripple/crawler/tableList",
-				type : "get",
-				dataType : "json",
-				data : {
-				},
-				success : function(result) {
-					$("#webroot").html("");
-					$.each(result, function(i, v) {
-						$("#webroot").append("<option value="+v.id+">" + v.name + "</option>");
-					});
-				}
-			});
+			url : "/ripple/crawler/tableList",
+			type : "get",
+			dataType : "json",
+			data : {
+			},
+			success : function(result) {
+				$("#webroot").html("");
+				$.each(result, function(i, v) {
+					$("#webroot").append("<option value="+v.id+">" + v.name +"-"+ v.moduleName + "</option>");
+				});
+			}
+		});
 	}); 
 	
 	$(function() {

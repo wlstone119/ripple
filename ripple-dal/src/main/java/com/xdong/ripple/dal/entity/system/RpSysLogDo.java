@@ -39,7 +39,6 @@ public class RpSysLogDo extends Model<RpSysLogDo> {
 	/**
 	 * 响应时间
 	 */
-	@TableField("TIME")
 	private Integer time;
 	/**
 	 * 请求方法

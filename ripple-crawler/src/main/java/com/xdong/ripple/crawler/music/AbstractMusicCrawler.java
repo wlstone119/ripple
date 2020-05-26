@@ -92,6 +92,7 @@ public abstract class AbstractMusicCrawler implements CrawlerStrategyInterface, 
 
 		int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
 		int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
+
 		ExecutorService service = null;
 
 		try {

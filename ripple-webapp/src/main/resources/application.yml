@@ -44,9 +44,9 @@ mybatis-plus:
     #logic-delete-value: 0
     #logic-not-delete-value: 1
     #自定义sql注入器,不在推荐使用此方式进行配置,请使用自定义bean注入
-    sql-injector: 
+    #sql-injector: 
     #自定义填充策略接口实现,不在推荐使用此方式进行配置,请使用自定义bean注入
-    meta-object-handler: 
+    #meta-object-handler: 
     #自定义SQL注入器
     #sql-injector: com.baomidou.springboot.xxx
     # SQL 解析缓存，开启后多租户 @SqlParser 注解生效

@@ -24,66 +24,68 @@ import com.xdong.ripple.crawler.strategy.CrawlerCompensateInterface;
 @Service
 public class CompensateTaskExecutor implements InitializingBean {
 
-    private static Logger                                    logger          = Logger.getLogger(CompensateTaskExecutor.class);
+	private static Logger logger = Logger.getLogger(CompensateTaskExecutor.class);
 
-    public volatile LinkedBlockingQueue<SupplementErrorTask> errorUrlQueue   = new LinkedBlockingQueue<SupplementErrorTask>();
+	public volatile LinkedBlockingQueue<SupplementErrorTask> errorUrlQueue = new LinkedBlockingQueue<SupplementErrorTask>();
 
-    private ScheduledExecutorService                         executorService = null;
+	private ScheduledExecutorService executorService = null;
 
-    private static final int                                 maxCount        = 3;
+	private static final int maxCount = 3;
 
-    public Object                                            lockMonitor     = new Object();
+	public Object lockMonitor = new Object();
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        ThreadFactory threadFactory = new CustomizableThreadFactory("CompensateTaskExecutor_");
-        executorService = Executors.newSingleThreadScheduledExecutor(threadFactory);
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		ThreadFactory threadFactory = new CustomizableThreadFactory("CompensateTaskExecutor_");
 
-        executorService.scheduleAtFixedRate(new Runnable() {
+		executorService = Executors.newSingleThreadScheduledExecutor(threadFactory);
 
-            @Override
-            public void run() {
-                logger.info("定时任务开始扫描补单队列，结果：【队列长度=" + errorUrlQueue.size() + "】");
+		executorService.scheduleAtFixedRate(new Runnable() {
 
-                synchronized (lockMonitor) {
-                    try {
-                        logger.info("定时任务开始扫描补单队列，结果：【队列长度=" + errorUrlQueue.size() + "】，等待线程唤醒！");
-                        lockMonitor.wait();
-                    } catch (InterruptedException e) {
-                        logger.error("线程：【" + Thread.currentThread().getName() + "】-> lockMonitor wait异常");
-                    }
-                }
+			@Override
+			public void run() {
+				logger.info("定时任务开始扫描补单队列，结果：【队列长度=" + errorUrlQueue.size() + "】");
 
-                logger.info("定时任务补单线程被唤醒，开始执行补单任务，【队列长度=" + errorUrlQueue.size() + "】");
+				synchronized (lockMonitor) {
+					try {
+						logger.info("定时任务开始扫描补单队列，结果：【队列长度=" + errorUrlQueue.size() + "】，等待线程唤醒！");
+						lockMonitor.wait();
+					} catch (InterruptedException e) {
+						logger.error("线程：【" + Thread.currentThread().getName() + "】-> lockMonitor wait异常");
+					}
+				}
 
-                if (errorUrlQueue != null && errorUrlQueue.size() > 0) {
-                    SupplementErrorTask task = errorUrlQueue.poll();
-                    logger.info("存在【" + errorUrlQueue.size() + "】条歌曲收录补单任务,开始执行爬取异常的,task:" + JSON.toJSONString(task));
+				logger.info("定时任务补单线程被唤醒，开始执行补单任务，【队列长度=" + errorUrlQueue.size() + "】");
 
-                    compensate(task);
-                }
-                logger.info("定时任务补单线程执行补单任务完成，剩余任务【队列长度=" + errorUrlQueue.size() + "】条");
-            }
-        }, 1, 10, TimeUnit.SECONDS);
-    }
+				if (errorUrlQueue != null && errorUrlQueue.size() > 0) {
+					SupplementErrorTask task = errorUrlQueue.poll();
+					logger.info("存在【" + errorUrlQueue.size() + "】条歌曲收录补单任务,开始执行爬取异常的,task:" + JSON.toJSONString(task));
 
-    private void compensate(SupplementErrorTask task) {
-        if (task.getRetryCount() > maxCount) {
-            logger.error("线程：【" + Thread.currentThread().getName() + "】-> 执行补单任务，重试一直未成功且超过最大次数+" + maxCount
-                         + ",taskUrl:" + task.getTaskUrl());
-            return;
-        }
+					compensate(task);
+				}
+				logger.info("定时任务补单线程执行补单任务完成，剩余任务【队列长度=" + errorUrlQueue.size() + "】条");
+			}
+		}, 1, 10, TimeUnit.SECONDS);
+	}
 
-        CrawlerCompensateInterface compensate = (CrawlerCompensateInterface) SpringUtil.getBeansByName(task.getCompensateClass());
+	private void compensate(SupplementErrorTask task) {
+		if (task.getRetryCount() > maxCount) {
+			logger.error("线程：【" + Thread.currentThread().getName() + "】-> 执行补单任务，重试一直未成功且超过最大次数+" + maxCount
+					+ ",taskUrl:" + task.getTaskUrl());
+			return;
+		}
 
-        switch (task.getTaskType()) {
-            case SONGSHEET:
-                compensate.songSheetUrlCompensate(task);
-                break;
-            case SONGS:
-                compensate.songUrlCompensate(task);
-                break;
-        }
+		CrawlerCompensateInterface compensate = (CrawlerCompensateInterface) SpringUtil
+				.getBeansByName(task.getCompensateClass());
 
-    }
+		switch (task.getTaskType()) {
+		case SONGSHEET:
+			compensate.songSheetUrlCompensate(task);
+			break;
+		case SONGS:
+			compensate.songUrlCompensate(task);
+			break;
+		}
+
+	}
 }

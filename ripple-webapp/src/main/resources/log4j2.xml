@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" monitorInterval="300">
 	<properties>
-		<property name="LOG_HOME">/Users/stone/ripple/logs/ripple.log</property>
+		<property name="LOG_HOME">/usr/local/logs/ripple.log</property>
 		<property name="FILE_PREFIX">ripple</property>
 		<property name="HISTORY_FILE_SUFFIX">.history</property>
 		<property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%X{_TRACE_ID}] [%X{_USER_ID}] [%t] %c{3}:%L %msg%n</property>
