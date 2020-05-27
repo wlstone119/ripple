@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xdong.ripple.common.crawler.CrawlerSearchSongVo;
@@ -99,6 +100,9 @@ public class CrawlerController extends BaseController {
 	public List<RpCrawlerUrlDo> getTableList(HttpServletRequest request) {
 		List<RpCrawlerUrlDo> urlList = new ArrayList<RpCrawlerUrlDo>();
 		Cookie[] cookies = request.getCookies();
+
+		logger.info("获取cookie信息，cookies:" + JSON.toJSONString(cookies));
+
 		String password = request.getParameter("password");
 		for (Cookie var : cookies) {
 			if (("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue()))

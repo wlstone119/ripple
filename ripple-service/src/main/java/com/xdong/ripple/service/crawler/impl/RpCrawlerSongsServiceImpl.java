@@ -4,9 +4,7 @@ import com.xdong.ripple.common.crawler.CrawlerSearchSongVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
 import com.xdong.ripple.dal.mapper.crawler.RpCrawlerSongsDoMapper;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.injector.methods.SelectCount;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
