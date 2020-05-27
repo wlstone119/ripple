@@ -149,7 +149,7 @@
 		<!-- BEGIN CONTENT -->
 		<div class="col-md-12">
 			<div class="content-page">
-				<form id="searchForm" method="post" action="/ripple/crawler/index"
+				<form id="searchForm" method="post" action="/crawler/index"
 					class="content-search-view2">
 					<div class="input-group">
 						<input type="text" class="form-control" name="queryKey"
@@ -351,7 +351,7 @@
 	}
 	function radio(id){
 		$.ajax({
-				url : "/ripple/crawler/songData",
+				url : "/crawler/songData",
 				type : "get",
 				dataType : "json",
 				data : {

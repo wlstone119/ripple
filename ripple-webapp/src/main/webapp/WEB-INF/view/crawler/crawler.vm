@@ -25,7 +25,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){ 
 		$.ajax({
-			url : "/ripple/crawler/tableList",
+			url : "/crawler/tableList",
 			type : "get",
 			dataType : "json",
 			data : {
@@ -45,7 +45,7 @@
 			$("#crawl").attr("disabled", true);
 			var webroot = $("#webroot").val();
 			$.ajax({
-				url : "/ripple/crawler/crawl",
+				url : "/crawler/crawl",
 				type : "post",
 				dataType : "json",
 				data : {

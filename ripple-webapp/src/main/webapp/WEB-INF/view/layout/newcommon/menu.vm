@@ -1,16 +1,16 @@
 <div class="header">
   <div class="container">
-    <a class="site-logo" href="/ripple/crawler/index"><img src="/ripple/static/img/ripple_music.png" alt="Ripple Music"></a>
+    <a class="site-logo" href="/crawler/index"><img src="/static/img/ripple_music.png" alt="Ripple Music"></a>
     <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
     <div class="header-navigation font-transform-inherit" style="font-size:25px;">
       <ul>
         <li class="dropdown active">
-          <a href="/ripple/crawler/index">
+          <a href="/crawler/index">
             首页 
           </a>
         </li>
         <li class="dropdown dropdown-megamenu">
-          <a href=""/ripple/crawler/index">
+          <a href=""/crawler/index">
             音乐
           </a>
         </li>
