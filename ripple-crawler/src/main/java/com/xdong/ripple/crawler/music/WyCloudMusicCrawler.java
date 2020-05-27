@@ -188,9 +188,14 @@ public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 			songDo.setSongAlbumPic(
 					albumPicUrl.indexOf("?") > 0 ? albumPicUrl.substring(0, albumPicUrl.indexOf("?")) : albumPicUrl);
 
-			rpSongsServiceImpl.save(songDo);
-
-			logger.info("已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
+			try {
+				rpSongsServiceImpl.save(songDo);
+				logger.info(
+						"已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
+			} catch (Exception e) {
+				logger.error(
+						"收录歌曲失败：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
+			}
 
 			if (resultDto != null) {
 				resultDto.setInsertCount(resultDto.getInsertCount() + 1);
