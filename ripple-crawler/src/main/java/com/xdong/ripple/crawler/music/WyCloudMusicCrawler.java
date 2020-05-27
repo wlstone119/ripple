@@ -190,18 +190,19 @@ public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 
 			try {
 				rpSongsServiceImpl.save(songDo);
+
 				logger.info(
 						"已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
+
+				if (resultDto != null) {
+					resultDto.setInsertCount(resultDto.getInsertCount() + 1);
+				}
+
 			} catch (Exception e) {
 				logger.error(
 						"收录歌曲失败：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
 			}
-
-			if (resultDto != null) {
-				resultDto.setInsertCount(resultDto.getInsertCount() + 1);
-			}
 		}
-
 	}
 
 	private boolean containSpan(Element ele) {
