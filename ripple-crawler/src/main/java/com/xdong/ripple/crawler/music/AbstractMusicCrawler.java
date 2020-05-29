@@ -191,7 +191,7 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 			}
 		} finally {
 
-			logger.info("现成调度完毕，resultList:" + JSON.toJSONString(resultList));
+			logger.info("线程调度完毕，resultList:" + JSON.toJSONString(resultList));
 
 			if (service != null) {
 				service.shutdown();
