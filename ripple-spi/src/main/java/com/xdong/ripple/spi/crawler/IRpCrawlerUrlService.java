@@ -1,5 +1,7 @@
 package com.xdong.ripple.spi.crawler;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 
@@ -13,6 +15,10 @@ import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
  */
 public interface IRpCrawlerUrlService extends IService<RpCrawlerUrlDo> {
 
-	RpCrawlerUrlDo getCrawlerUrlRecord(String type, String crawlerClss);
+	List<RpCrawlerUrlDo> getCrawlerUrlList(String type, String name);
+
+	List<RpCrawlerUrlDo> getCrawlerUrlList(List<String> typeList);
+
+	RpCrawlerUrlDo getCrawlerUrlRecord(String name, String moduleName);
 
 }

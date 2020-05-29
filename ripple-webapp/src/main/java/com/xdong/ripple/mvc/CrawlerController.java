@@ -1,6 +1,7 @@
 package com.xdong.ripple.mvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xdong.ripple.common.crawler.CrawlerSearchSongVo;
 import com.xdong.ripple.commonservice.annotation.Log;
 import com.xdong.ripple.crawler.common.CrawlerResultVo;
+import com.xdong.ripple.crawler.common.CrawlerTypeEnum;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.crawler.strategy.CrawlerStrategyClient;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
@@ -105,9 +107,16 @@ public class CrawlerController extends BaseController {
 
 		String password = request.getParameter("password");
 		for (Cookie var : cookies) {
+
 			if (("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue()))
 					|| "passwordiamaadmin".equals(password)) {
-				urlList = rpCrawlerUrlServiceImpl.list(new QueryWrapper<RpCrawlerUrlDo>());
+
+				List<String> typeList = Arrays.asList(CrawlerTypeEnum.INIT.getCode(), CrawlerTypeEnum.SHOW.getCode());
+				urlList = rpCrawlerUrlServiceImpl.getCrawlerUrlList(typeList);
+
+				for (RpCrawlerUrlDo urlDo : urlList) {
+					urlDo.setType(CrawlerTypeEnum.getDescByCode(urlDo.getType()));
+				}
 			}
 		}
 		return urlList;
@@ -162,8 +171,14 @@ public class CrawlerController extends BaseController {
 	@ResponseBody
 	public Object crawl(ParamVo paramVo) {
 		try {
-			CrawlerResultVo resultVo = crawlerStrategyClient.execute(paramVo);
-			return resultVo.getResultList();
+			RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+
+			if (CrawlerTypeEnum.INIT.getCode().equals(urlDo.getType())) {
+				return crawlerStrategyClient.specialCrawler(paramVo);
+			} else {
+				CrawlerResultVo resultVo = crawlerStrategyClient.execute(paramVo);
+				return resultVo.getResultList();
+			}
 		} catch (Exception e) {
 			logger.error("爬虫任务调度时出现异常", e);
 			return false;
@@ -187,11 +202,19 @@ public class CrawlerController extends BaseController {
 	public Object execute(HttpServletRequest request, ParamVo paramVo) {
 		Cookie[] cookies = request.getCookies();
 		String password = request.getParameter("password");
+
 		for (Cookie var : cookies) {
 			if (("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue()))
 					|| "passwordiamaadmin".equals(password)) {
-				CrawlerResultVo resultVo = crawlerStrategyClient.execute(paramVo);
-				return resultVo.getResultList();
+
+				RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+
+				if (CrawlerTypeEnum.INIT.getCode().equals(urlDo.getType())) {
+					return crawlerStrategyClient.specialCrawler(paramVo);
+				} else {
+					CrawlerResultVo resultVo = crawlerStrategyClient.execute(paramVo);
+					return resultVo.getResultList();
+				}
 			}
 		}
 

@@ -33,9 +33,17 @@ public class CrawlerUtil {
     }
 
     public static void main(String[] args) throws IOException {
-        String url = "https://music.163.com/discover/playlist?cat=安静&order=hot&limit=35&offset=1295";
+        String url = "https://music.163.com/discover/playlist/?order=hot";
         Document dom = connectUrl(url);
-        Element songSheets = dom.getElementById("m-pl-container");
+        Element songSheets = dom.getElementById("cateListBox");
+        
+        for (Element songSheet : songSheets.children()) {
+        	if(songSheet.hasAttr("href") && songSheet.hasAttr("data-cat")
+    				&& ("s-fc1 0".equals(songSheet.attr("class")))) {
+        		
+        	}
+		}
+        
         System.out.println(songSheets);
 
     }

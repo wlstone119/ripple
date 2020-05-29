@@ -8,9 +8,11 @@ import com.xdong.ripple.crawler.common.ParamVo;
  * 
  * @author wanglei Mar 24, 2019 9:19:29 PM
  */
-public interface CrawlerStrategyInterface {
+public interface CrawlerMusicStrategyInterface {
 
 	// 爬虫的执行方法体
 	public CrawlerResultVo execute(ParamVo paramVo);
+	
+	public boolean specialCrawler();
 	
 }

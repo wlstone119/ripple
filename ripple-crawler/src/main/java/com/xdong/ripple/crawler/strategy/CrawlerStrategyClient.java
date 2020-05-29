@@ -15,6 +15,7 @@ import com.xdong.ripple.common.BizException;
 import com.xdong.ripple.common.utils.HttpUtil;
 import com.xdong.ripple.common.utils.SpringUtil;
 import com.xdong.ripple.crawler.common.CrawlerResultVo;
+import com.xdong.ripple.crawler.common.CrawlerTypeEnum;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerUrlService;
@@ -45,29 +46,34 @@ public class CrawlerStrategyClient {
 		}
 
 		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(urlKey);
-		paramVo.setUrl(urlDo.getCrawlerUrl());
-		paramVo.setDomainUrl(urlDo.getDomainName());
-		paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
 		paramVo.setStreatyClassName(urlDo.getCrawlerClass());
 
-		CrawlerStrategyInterface strategy = (CrawlerStrategyInterface) SpringUtil
+		CrawlerMusicStrategyInterface strategy = (CrawlerMusicStrategyInterface) SpringUtil
 				.getBeansByName(urlDo.getCrawlerClass());
 
 		return strategy.execute(paramVo);
 	}
 
-	private Integer getLimit(String crawlerUrl) {
-		URL url;
-		try {
-			url = new URL(crawlerUrl);
-			Map<String, String> paramObj = HttpUtil.splitQueryString(url.getQuery());
-			if (paramObj.get("limitFlag") != null) {
-				return Integer.parseInt(paramObj.get("limitFlag"));
-			}
-		} catch (MalformedURLException e) {
-			throw BizException.create(String.format("param error: %s", crawlerUrl));
+	/**
+	 * 策略模式执行者帮你自动选择策略进行执行
+	 * 
+	 * @param paramVo
+	 * @throws BizException
+	 */
+	public boolean specialCrawler(ParamVo paramVo) throws BizException {
+
+		Long urlKey = paramVo.getUrlKey();
+
+		if (urlKey == null || urlKey <= 0) {
+			throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
 		}
-		return null;
+
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(urlKey);
+
+		CrawlerMusicStrategyInterface strategy = (CrawlerMusicStrategyInterface) SpringUtil
+				.getBeansByName(urlDo.getCrawlerClass());
+
+		return strategy.specialCrawler();
 	}
 
 	/**

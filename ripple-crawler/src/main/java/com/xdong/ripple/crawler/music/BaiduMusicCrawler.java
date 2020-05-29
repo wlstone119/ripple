@@ -2,6 +2,7 @@ package com.xdong.ripple.crawler.music;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,7 +16,9 @@ import com.xdong.ripple.common.enums.CrawlerMusicTaskTypeEnum;
 import com.xdong.ripple.crawler.common.Constant;
 import com.xdong.ripple.crawler.common.CrawlerResultDto;
 import com.xdong.ripple.crawler.common.CrawlerUtil;
+import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
+import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 
 /**
  * 类BaiduMusicCrawler.java的实现描述：TODO 类实现描述

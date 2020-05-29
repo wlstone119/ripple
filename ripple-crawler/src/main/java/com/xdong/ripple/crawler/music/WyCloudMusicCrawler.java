@@ -1,8 +1,12 @@
 package com.xdong.ripple.crawler.music;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,8 +18,11 @@ import com.xdong.ripple.common.crawler.SupplementErrorTask;
 import com.xdong.ripple.common.enums.CrawlerMusicTaskTypeEnum;
 import com.xdong.ripple.crawler.common.Constant;
 import com.xdong.ripple.crawler.common.CrawlerResultDto;
+import com.xdong.ripple.crawler.common.CrawlerTypeEnum;
 import com.xdong.ripple.crawler.common.CrawlerUtil;
+import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
+import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 
 /**
  * 类WyCloudMusicCrawler.java的实现描述：TODO 类实现描述
@@ -24,6 +31,8 @@ import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
  */
 @Service
 public class WyCloudMusicCrawler extends AbstractMusicCrawler {
+
+	private static final String name = "wangyi";
 
 	private static Logger logger = Logger.getLogger(WyCloudMusicCrawler.class);
 
@@ -226,5 +235,78 @@ public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 		return "<iframe frameborder=\"no\" border=\"0\" marginwidth=\"0\" "
 				+ "marginheight=\"0\" width=330 height=86 src=\"//music.163.com/outchain/player?type=2&id=" + id
 				+ "&auto=1&height=66\"></iframe>";
+	}
+
+	public boolean specialCrawler() {
+		Document dom = CrawlerUtil.connectUrl(Constant.CRAWLER_CRAWLER_URL_WANGYI);
+
+		Element songSheets = dom.getElementById("cateListBox");
+		for (Element songSheet : songSheets.children()) {
+			loopCrawlerElem(songSheet);
+		}
+
+		return true;
+	}
+
+	private void loopCrawlerElem(Element songSheet) {
+		if (songSheet.hasAttr("href") && songSheet.hasAttr("data-cat") && ("s-fc1 ".equals(songSheet.attr("class")))) {
+			RpCrawlerUrlDo urlDo = new RpCrawlerUrlDo();
+
+			urlDo.setcTime(new Date());
+			urlDo.setmTime(new Date());
+			urlDo.setcUser("system");
+			urlDo.setmUser("system");
+			urlDo.setName(Constant.CRAWLER_RESOURCE_WANGYI);
+			urlDo.setDomainName(Constant.CRAWLER_PREFIXURL_WANGYI);
+			urlDo.setType(CrawlerTypeEnum.MUSIC.getCode());
+			urlDo.setCrawlerClass(Constant.CRAWLER_CRAWLER_CLASS_WANGYI);
+			urlDo.setIsValid("n");
+
+			domainUrl = Constant.CRAWLER_PREFIXURL_WANGYI;
+			String appendUrl = appendUrl(songSheet.getElementsByTag("a").attr("href"));
+
+			try {
+				appendUrl = URLDecoder.decode(appendUrl, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+
+			urlDo.setCrawlerUrl(appendUrl + "&limitFlag=38");
+			urlDo.setModuleName(songSheet.attr("data-cat"));
+
+			initCrawlerUrl(urlDo);
+		} else {
+			if (!songSheet.children().isEmpty()) {
+				for (Element element : songSheet.children()) {
+					loopCrawlerElem(element);
+				}
+			}
+		}
+	}
+
+	public void initCrawlerUrl(RpCrawlerUrlDo urlDo) {
+		RpCrawlerUrlDo rpUrlDo = rpCrawlerUrlServiceImpl.getCrawlerUrlRecord(name, urlDo.getModuleName());
+
+		if (rpUrlDo == null) {
+			rpCrawlerUrlServiceImpl.save(urlDo);
+			logger.info("初始化爬虫任务成功：[" + urlDo.getName() + "-" + urlDo.getModuleName() + "]");
+		} else {
+			rpUrlDo.setCrawlerUrl(urlDo.getCrawlerUrl());
+			rpUrlDo.setmTime(urlDo.getmTime());
+			rpCrawlerUrlServiceImpl.updateById(rpUrlDo);
+			logger.info("已经存在爬虫任务,更新url：[" + rpUrlDo.getName() + "-" + rpUrlDo.getModuleName() + "],url:"
+					+ rpUrlDo.getCrawlerUrl());
+		}
+	}
+
+	@Override
+	protected List<RpCrawlerUrlDo> getCrawlerUrlList(ParamVo paramVo) {
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+
+		if (CrawlerTypeEnum.SHOW.getCode().equals(urlDo.getType()) && StringUtils.isBlank(urlDo.getCrawlerUrl())) {
+			return rpCrawlerUrlServiceImpl.getCrawlerUrlList(CrawlerTypeEnum.MUSIC.getCode(),
+					Constant.CRAWLER_RESOURCE_WANGYI);
+		}
+		return null;
 	}
 }
