@@ -12,7 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +20,8 @@ import org.springframework.util.StopWatch;
 import com.alibaba.fastjson.JSON;
 import com.xdong.ripple.common.BizException;
 import com.xdong.ripple.common.utils.HttpUtil;
-import com.xdong.ripple.crawler.common.Constant;
 import com.xdong.ripple.crawler.common.CrawlerResultDto;
 import com.xdong.ripple.crawler.common.CrawlerResultVo;
-import com.xdong.ripple.crawler.common.CrawlerTypeEnum;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.crawler.strategy.CrawlerCompensateInterface;
 import com.xdong.ripple.crawler.strategy.CrawlerMusicStrategyInterface;
@@ -42,8 +39,6 @@ import com.xdong.ripple.spi.crawler.IRpCrawlerUrlService;
 public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterface, CrawlerCompensateInterface {
 
 	private static Logger logger = Logger.getLogger(AbstractMusicCrawler.class);
-
-	protected String domainUrl;
 
 	@Autowired
 	CompensateTaskExecutor taskExecutor;

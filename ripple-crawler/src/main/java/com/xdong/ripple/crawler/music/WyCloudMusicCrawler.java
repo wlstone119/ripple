@@ -224,11 +224,11 @@ public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 	}
 
 	private String appendUrl(String url) {
-		return domainUrl + url;
+		return Constant.CRAWLER_PREFIXURL_WANGYI + url;
 	}
 
 	private String getSongUrlById(String songIdStr) {
-		return domainUrl + songIdStr;
+		return Constant.CRAWLER_PREFIXURL_WANGYI + songIdStr;
 	}
 
 	private String appendIframe(String id) {
@@ -262,7 +262,6 @@ public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 			urlDo.setCrawlerClass(Constant.CRAWLER_CRAWLER_CLASS_WANGYI);
 			urlDo.setIsValid("n");
 
-			domainUrl = Constant.CRAWLER_PREFIXURL_WANGYI;
 			String appendUrl = appendUrl(songSheet.getElementsByTag("a").attr("href"));
 
 			try {

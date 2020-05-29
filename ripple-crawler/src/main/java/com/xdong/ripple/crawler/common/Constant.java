@@ -28,7 +28,7 @@ public class Constant {
 
 	public static final String CRAWLER_RESOURCE_WANGYI = "wangyi";
 
-	public static final String CRAWLER_PREFIXURL_WANGYI = "http://music.163.com/";
+	public static final String CRAWLER_PREFIXURL_WANGYI = "https://music.163.com/";
 
 	public static final String CRAWLER_RESOURCE_WANGYI_URL = "http://music.163.com/discover/playlist/?cat=民谣&order=hot&limit=35";
 
