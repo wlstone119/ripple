@@ -1,9 +1,14 @@
 package com.xdong.ripple.crawler.music;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -25,26 +30,45 @@ public class CompensateTaskExecutor implements InitializingBean {
 
 	private static final int maxCount = 3;
 
+	private boolean isStart = false;
+
+	public Object lockMonitor = new Object();
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		while (true) {
+		new Thread(new Runnable() {
 
-			logger.info("定时任务补单线程被唤醒，开始执行补单任务，【队列长度=" + errorUrlQueue.size() + "】");
+			@Override
+			public void run() {
 
-			if (errorUrlQueue != null && errorUrlQueue.size() > 0) {
+				if (!isStart) {
+					isStart = true;
+				} else {
+					return;
+				}
 
-				SupplementErrorTask task = errorUrlQueue.poll();
-				logger.info("存在【" + errorUrlQueue.size() + "】条歌曲收录补单任务,开始执行爬取异常的,task:" + JSON.toJSONString(task));
+				while (true) {
+					if (errorUrlQueue != null && errorUrlQueue.size() > 0) {
+						logger.info("任务补单线程开始执行补单任务，【队列长度=" + errorUrlQueue.size() + "】");
 
-				compensate(task);
+						SupplementErrorTask task = errorUrlQueue.poll();
+						logger.info(
+								"存在【" + errorUrlQueue.size() + "】条歌曲收录补单任务,开始执行爬取异常的,task:" + JSON.toJSONString(task));
 
-			} else {
-				Thread.sleep(3000L);
+						compensate(task);
+
+						logger.info("定时任务补单线程执行补单任务完成，剩余任务【队列长度=" + errorUrlQueue.size() + "】条");
+					} else {
+						try {
+							Thread.sleep(3000L);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 			}
-
-			logger.info("定时任务补单线程执行补单任务完成，剩余任务【队列长度=" + errorUrlQueue.size() + "】条");
-		}
+		}, "CompensateTaskExecutor").start();
 	}
 
 	private void compensate(SupplementErrorTask task) {

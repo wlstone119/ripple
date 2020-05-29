@@ -111,7 +111,7 @@ public class CrawlerController extends BaseController {
 			if (("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue()))
 					|| "passwordiamaadmin".equals(password)) {
 
-				List<String> typeList = Arrays.asList(CrawlerTypeEnum.INIT.getCode(), CrawlerTypeEnum.SHOW.getCode());
+				List<String> typeList = Arrays.asList(CrawlerTypeEnum.MUSIC.getCode(),CrawlerTypeEnum.INIT.getCode(), CrawlerTypeEnum.SHOW.getCode());
 				urlList = rpCrawlerUrlServiceImpl.getCrawlerUrlList(typeList);
 
 				for (RpCrawlerUrlDo urlDo : urlList) {
