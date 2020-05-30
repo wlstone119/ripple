@@ -1,14 +1,9 @@
 package com.xdong.ripple.crawler.music;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -36,6 +31,8 @@ public class CompensateTaskExecutor implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+
+		logger.info("************开始初始化补单任务执行器************");
 
 		new Thread(new Runnable() {
 
@@ -69,6 +66,8 @@ public class CompensateTaskExecutor implements InitializingBean {
 				}
 			}
 		}, "CompensateTaskExecutor").start();
+
+		logger.info("************初始化补单任务执行器完成************");
 	}
 
 	private void compensate(SupplementErrorTask task) {

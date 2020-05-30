@@ -32,7 +32,7 @@ public class SinaNewsCrawler implements CrawlerStrategyInterface {
     @Override
     public CrawlerResultVo execute(ParamVo paramVo) {
         try {
-            crawl(paramVo.getUrl());
+           // crawl(paramVo.getUrl());
         } catch (Exception e) {
             logger.error(String.format("运行爬虫时出现异常： 参数【%s】", JSON.toJSONString(paramVo)), e);
         }

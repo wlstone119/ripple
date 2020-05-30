@@ -44,6 +44,9 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 	CompensateTaskExecutor taskExecutor;
 
 	@Autowired
+	CrawlerTaskExecutor crawlerTaskExecutor;
+
+	@Autowired
 	IRpCrawlerSongsService rpSongsServiceImpl;
 
 	@Autowired
@@ -73,33 +76,33 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 				BeanUtils.copyProperties(paramVo, taskParamVo);
 
 				taskParamVo.setUrlKey(crawlerUrlDo.getId());
-				taskParamVo.setUrl(crawlerUrlDo.getCrawlerUrl());
-				taskParamVo.setDomainUrl(crawlerUrlDo.getDomainName());
 				taskParamVo.setLimitPage(getLimit(crawlerUrlDo.getCrawlerUrl()));
 
 				paramList.add(taskParamVo);
 			}
 		} else {
 			RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
-
-			paramVo.setUrl(urlDo.getCrawlerUrl());
-			paramVo.setDomainUrl(urlDo.getDomainName());
 			paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
-
 			paramList.add(paramVo);
 		}
 
 		if (CollectionUtils.isNotEmpty(paramList)) {
 			for (ParamVo taskParam : paramList) {
-				logger.info("开始处理爬虫任务请求，taskParam:" + JSON.toJSONString(taskParam));
-				startTask(taskParam);
+				crawlerTaskExecutor.taskIdQueue.add(taskParam.getUrlKey());
 			}
 		}
 
 		return resultVo;
 	}
 
-	private CrawlerResultVo startTask(ParamVo paramVo) {
+	public CrawlerResultVo startTask(Long taskId) {
+
+		ParamVo paramVo = new ParamVo();
+
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(taskId);
+		paramVo.setBegin(0);
+		paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
+		paramVo.setUrlKey(taskId);
 
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -160,6 +163,8 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 		int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
 		int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
 
+		RpCrawlerUrlDo crawlerUrlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+
 		ExecutorService service = null;
 
 		try {
@@ -170,7 +175,7 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 			for (int i = begin; i < end; i++) {
 				stratThreadCount++;
 				FutureTask<CrawlerResultDto> task = (FutureTask<CrawlerResultDto>) service
-						.submit(new CrawlerCallable(paramVo, i));
+						.submit(new CrawlerCallable(crawlerUrlDo.getCrawlerUrl(), i));
 				list.add(task);
 			}
 
@@ -185,9 +190,7 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 				}
 			}
 		} finally {
-
 			logger.info("线程调度完毕，resultList:" + JSON.toJSONString(resultList));
-
 			if (service != null) {
 				service.shutdown();
 				logger.info("任务执行完毕，关闭线程池!");
@@ -211,8 +214,8 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 
 		private String url;
 
-		public CrawlerCallable(ParamVo paramVo, int page) {
-			url = getCrawlerUrlByDataUrl(paramVo.getUrl(), page);
+		public CrawlerCallable(String crawlerUrl, int page) {
+			url = getCrawlerUrlByDataUrl(crawlerUrl, page);
 		}
 
 		@Override

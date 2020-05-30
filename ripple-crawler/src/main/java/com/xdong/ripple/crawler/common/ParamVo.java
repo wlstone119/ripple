@@ -7,95 +7,63 @@ package com.xdong.ripple.crawler.common;
  */
 public class ParamVo {
 
-    private String domainUrl;
+	private Long urlKey;
 
-    private Long   urlKey;
+	private int begin;
 
-    private String url;
+	private int end;
 
-    private int    begin;
+	private String searchKey;
 
-    private int    end;
+	private String modelName;
 
-    private String searchKey;
+	private Integer limitPage;
 
-    private String modelName;
-    
-    private Integer limitPage;
-    
-    private String streatyClassName;
+	public String getSearchKey() {
+		return searchKey;
+	}
 
-    public String getSearchKey() {
-        return searchKey;
-    }
+	public void setSearchKey(String searchKey) {
+		this.searchKey = searchKey;
+	}
 
-    public void setSearchKey(String searchKey) {
-        this.searchKey = searchKey;
-    }
+	public Long getUrlKey() {
+		return urlKey;
+	}
 
-    public String getDomainUrl() {
-        return domainUrl;
-    }
+	public void setUrlKey(Long urlKey) {
+		this.urlKey = urlKey;
+	}
 
-    public void setDomainUrl(String domainUrl) {
-        this.domainUrl = domainUrl;
-    }
+	public int getBegin() {
+		return begin;
+	}
 
-    public Long getUrlKey() {
-        return urlKey;
-    }
+	public void setBegin(int begin) {
+		this.begin = begin;
+	}
 
-    public void setUrlKey(Long urlKey) {
-        this.urlKey = urlKey;
-    }
+	public int getEnd() {
+		return end;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public void setEnd(int end) {
+		this.end = end;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	public String getModelName() {
+		return modelName;
+	}
 
-    public int getBegin() {
-        return begin;
-    }
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
+	}
 
-    public void setBegin(int begin) {
-        this.begin = begin;
-    }
+	public Integer getLimitPage() {
+		return limitPage;
+	}
 
-    public int getEnd() {
-        return end;
-    }
-
-    public void setEnd(int end) {
-        this.end = end;
-    }
-
-    public String getModelName() {
-        return modelName;
-    }
-
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
-    }
-    
-    public Integer getLimitPage() {
-        return limitPage;
-    }
-    
-    public void setLimitPage(Integer limit) {
-        this.limitPage = limit;
-    }
-
-    
-    public String getStreatyClassName() {
-        return streatyClassName;
-    }
-    
-    public void setStreatyClassName(String streatyClassName) {
-        this.streatyClassName = streatyClassName;
-    }
-    
+	public void setLimitPage(Integer limit) {
+		this.limitPage = limit;
+	}
 }

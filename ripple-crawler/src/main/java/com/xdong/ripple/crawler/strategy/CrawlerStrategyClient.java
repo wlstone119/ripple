@@ -1,21 +1,13 @@
 package com.xdong.ripple.crawler.strategy;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-
-import javax.servlet.http.HttpUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.xdong.ripple.common.BizException;
-import com.xdong.ripple.common.utils.HttpUtil;
 import com.xdong.ripple.common.utils.SpringUtil;
 import com.xdong.ripple.crawler.common.CrawlerResultVo;
-import com.xdong.ripple.crawler.common.CrawlerTypeEnum;
 import com.xdong.ripple.crawler.common.ParamVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 import com.xdong.ripple.spi.crawler.IRpCrawlerUrlService;
@@ -46,8 +38,6 @@ public class CrawlerStrategyClient {
 		}
 
 		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(urlKey);
-		paramVo.setStreatyClassName(urlDo.getCrawlerClass());
-
 		CrawlerMusicStrategyInterface strategy = (CrawlerMusicStrategyInterface) SpringUtil
 				.getBeansByName(urlDo.getCrawlerClass());
 
@@ -89,8 +79,8 @@ public class CrawlerStrategyClient {
 		}
 
 		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getCrawlerUrlRecord("search", paramVo.getModelName());
-		paramVo.setUrl(String.format(urlDo.getCrawlerUrl(), paramVo.getSearchKey()));
-		paramVo.setDomainUrl(urlDo.getDomainName());
+//		paramVo.setUrl(String.format(urlDo.getCrawlerUrl(), paramVo.getSearchKey()));
+//		paramVo.setDomainUrl(urlDo.getDomainName());
 		CrawlerSearchInterface strategy = (CrawlerSearchInterface) SpringUtil.getBeansByName(urlDo.getCrawlerClass());
 
 		return strategy.search(paramVo);

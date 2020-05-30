@@ -12,7 +12,9 @@ public interface CrawlerMusicStrategyInterface {
 
 	// 爬虫的执行方法体
 	public CrawlerResultVo execute(ParamVo paramVo);
-	
+
+	public CrawlerResultVo startTask(Long taskId);
+
 	public boolean specialCrawler();
-	
+
 }

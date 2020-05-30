@@ -40,8 +40,8 @@ public class StoryCrawler implements CrawlerStrategyInterface {
     @Override
     public CrawlerResultVo execute(ParamVo paramVo) {
         try {
-            domainUrl = paramVo.getDomainUrl();
-            return crawls(paramVo.getUrl(), paramVo.getBegin(), paramVo.getEnd());
+            //domainUrl = paramVo.getDomainUrl();
+            //return crawls(paramVo.getUrl(), paramVo.getBegin(), paramVo.getEnd());
         } catch (Exception e) {
             logger.error(String.format("运行爬虫时出现异常： 参数【%s】", JSON.toJSONString(paramVo)), e);
         }
