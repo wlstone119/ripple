@@ -43,9 +43,9 @@ public class CrawlerTaskExecutor implements InitializingBean {
 						logger.info("存在【" + taskIdQueue.size() + "】条爬虫任务,开始执行任务taskId:" + taskId);
 						execute(taskId);
 
-						logger.info("等待爬虫任务结束,开始休眠5分钟......");
-						sleep(5 * 60);
-						logger.info("等待爬虫任务结束,休眠5分钟结束!!!!!!");
+						logger.info("等待爬虫任务结束,开始休眠30s......");
+						sleep(30);
+						logger.info("等待爬虫任务结束,休眠30s结束!!!!!!");
 					} else {
 						sleep(3);
 					}
