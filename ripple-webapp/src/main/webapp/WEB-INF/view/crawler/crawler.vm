@@ -33,7 +33,7 @@
 			success : function(result) {
 				$("#webroot").html("");
 				$.each(result, function(i, v) {
-					$("#webroot").append("<option value="+v.id+">" + v.name +"-"+ v.moduleName + "-"+ v.type+ "</option>");
+					$("#webroot").append("<option value="+v.id+">" + v.id +"-"+ v.name +"-"+ v.moduleName + "-"+ v.type+ "</option>");
 				});
 			}
 		});
