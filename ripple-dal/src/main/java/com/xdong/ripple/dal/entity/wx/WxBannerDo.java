@@ -66,6 +66,18 @@ public class WxBannerDo extends Model<WxBannerDo> {
      */
     @TableField("banner_link")
     private String bannerLink;
+    
+    /**
+     * banner类型
+     */
+    @TableField("banner_type")
+    private Integer bannerType;
+    
+    /**
+     * 排序号
+     */
+    @TableField("sort")
+    private Integer sort;
 
 
     public Long getId() {
@@ -140,7 +152,23 @@ public class WxBannerDo extends Model<WxBannerDo> {
         this.bannerLink = bannerLink;
     }
 
-    @Override
+    public Integer getBannerType() {
+		return bannerType;
+	}
+
+	public void setBannerType(Integer bannerType) {
+		this.bannerType = bannerType;
+	}
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	@Override
     protected Serializable pkVal() {
         return this.id;
     }
@@ -157,6 +185,8 @@ public class WxBannerDo extends Model<WxBannerDo> {
         ", bannerDescription=" + bannerDescription +
         ", bannerImage=" + bannerImage +
         ", bannerLink=" + bannerLink +
+        ", bannerType=" + bannerType +
+        ", sort=" + sort +
         "}";
     }
 }

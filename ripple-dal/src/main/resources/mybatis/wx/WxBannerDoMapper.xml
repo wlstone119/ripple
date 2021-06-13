@@ -13,11 +13,13 @@
         <result column="banner_description" property="bannerDescription" />
         <result column="banner_image" property="bannerImage" />
         <result column="banner_link" property="bannerLink" />
+        <result column="banner_type" property="bannerType" />
+        <result column="sort" property="sort" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, banner_name AS bannerName, banner_description AS bannerDescription, banner_image AS bannerImage, banner_link AS bannerLink
+        id, c_time AS cTime, c_user AS cUser, m_time AS mTime, m_user AS mUser, banner_name AS bannerName, banner_description AS bannerDescription, banner_image AS bannerImage, banner_link AS bannerLink, banner_type AS bannerType, sort AS sort
     </sql>
 
 </mapper>

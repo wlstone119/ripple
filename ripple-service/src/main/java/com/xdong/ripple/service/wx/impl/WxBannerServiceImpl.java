@@ -3,7 +3,8 @@ package com.xdong.ripple.service.wx.impl;
 import com.xdong.ripple.dal.entity.wx.WxBannerDo;
 import com.xdong.ripple.dal.mapper.wx.WxBannerDoMapper;
 import com.xdong.ripple.spi.wx.IWxBannerService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.ripple.mplus.support.service.impl.MPServiceImpl;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +16,6 @@ import org.springframework.stereotype.Service;
  * @since 2021-06-14
  */
 @Service
-public class WxBannerServiceImpl extends ServiceImpl<WxBannerDoMapper, WxBannerDo> implements IWxBannerService {
+public class WxBannerServiceImpl extends MPServiceImpl<WxBannerDoMapper, WxBannerDo> implements IWxBannerService {
 
 }

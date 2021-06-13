@@ -1,6 +1,6 @@
 package com.xdong.ripple.spi.wx;
 
-import com.baomidou.mybatisplus.service.IService;
+import com.ripple.mplus.support.service.IMPService;
 import com.xdong.ripple.dal.entity.wx.WxBannerDo;
 
 /**
@@ -11,6 +11,6 @@ import com.xdong.ripple.dal.entity.wx.WxBannerDo;
  * @author wanglei
  * @since 2021-06-14
  */
-public interface IWxBannerService extends IService<WxBannerDo> {
+public interface IWxBannerService extends IMPService<WxBannerDo> {
 
 }

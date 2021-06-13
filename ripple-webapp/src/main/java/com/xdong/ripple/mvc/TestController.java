@@ -25,7 +25,7 @@ public class TestController extends BaseController {
 
 	@Autowired
 	private IXdIdolHomeViewDetailService xdIdolHomeViewDetailServiceImpl;
-
+	
 	@Value("${server.port}")
 	private static String port;
 
@@ -65,4 +65,5 @@ public class TestController extends BaseController {
 
 		return null;
 	}
+	
 }

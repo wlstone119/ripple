@@ -89,6 +89,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/htdocs/**", "anon");
         filterChainDefinitionMap.put("/test/**", "anon");
         filterChainDefinitionMap.put("/ripple/**", "anon");
+        filterChainDefinitionMap.put("/wx/**", "anon");
         
         filterChainDefinitionMap.put("/", "anon");
         filterChainDefinitionMap.put("/**", "authc");
