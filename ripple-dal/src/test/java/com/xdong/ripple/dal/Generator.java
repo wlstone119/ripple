@@ -59,8 +59,8 @@ public class Generator {
 										// }
 										return super.processTypeConvert(fieldType);
 									}
-								}).setDriverName("com.mysql.jdbc.Driver").setUsername("test").setPassword("test!")
-								.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull"))
+								}).setDriverName("com.mysql.jdbc.Driver").setUsername("ripple").setPassword("ripple")
+								.setUrl("jdbc:mysql://localhost:3306/ripple?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull"))
 				.setStrategy(
 						// 策略配置
 						new StrategyConfig()
@@ -97,9 +97,9 @@ public class Generator {
 				// .setLogicDeleteFieldName("is_delete")
 				).setPackageInfoList(new ArrayList<PackageConfig>() {
 					{// 包配置
-						add(new PackageConfig().setModuleName("XX-dal.src.main.java").setParent("com.XX.project")// 自定义包路径//
+						add(new PackageConfig().setModuleName("ripple-dal.src.main.java").setParent("com.xdong.ripple")// 自定义包路径//
 																													// 自定义包路径
-								.setEntity("dal.bean." + dir).setMapper("dal.mapper." + dir).setXml(null)
+								.setEntity("dal.entity.wx" + dir).setMapper("dal.mapper.wx" + dir).setXml(null)
 								.setService(null).setServiceImpl(null).setController(null).setFacacde(null)
 								.setFacacdeImpl(null)
 
@@ -107,7 +107,7 @@ public class Generator {
 
 						// 包配置
 
-						add(new PackageConfig().setModuleName("XX-dal.src.main.resources").setParent("com.XX.project")// 自定义包路径//
+						add(new PackageConfig().setModuleName("ripple-dal.src.main.resources").setParent("com.xdong.ripple")// 自定义包路径//
 																														// 自定义包路径
 								.setXml("mybatis.mapping." + dir)
 
@@ -116,10 +116,10 @@ public class Generator {
 						if (isNeedService) {
 
 							// 包配置
-							add(new PackageConfig().setModuleName("XX-service.src.main.java")
-									.setParent("com.XX.project")// 自定义包路径// 自定义包路径
-									.setService("biz.dalService." + dir)
-									.setServiceImpl("biz.dalService." + dir + ".impl")
+							add(new PackageConfig().setModuleName("ripple-service.src.main.java")
+									.setParent("com.xdong.ripple")// 自定义包路径// 自定义包路径
+									.setService("spi.wx" + dir)
+									.setServiceImpl("service.wx.impl" + dir + ".impl")
 
 									.setEntity(null).setController(null).setFacacde(null).setFacacdeImpl(null)
 									.setMapper(null).setXml(null));
@@ -128,8 +128,8 @@ public class Generator {
 							// 包配置
 							add(
 
-									new PackageConfig().setModuleName("XX-webapp.src.main.java")
-											.setParent("com.XX.project")// 自定义包路径// 自定义包路径
+									new PackageConfig().setModuleName("ripple-webapp.src.main.java")
+											.setParent("com.xdong.ripple")// 自定义包路径// 自定义包路径
 											.setController("controller.app." + dir)// 这里是控制器包名，默认 web
 
 											.setService(null).setServiceImpl(null).setEntity(null).setFacacde(null)

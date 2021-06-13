@@ -18,7 +18,7 @@ public class MainGenerator {
         // 文件目录
         final String dir = "system";
         // 本地项目路径
-        String project_url = "/Users/stone/git/ripple-master";
+        String project_url = "/Users/wanglei/git/ripple";
         // 前缀
         String tablePrefix = "";
         // 表名
@@ -27,7 +27,7 @@ public class MainGenerator {
         //String[] table_names = new String[] { "rp_sys_dict","rp_sys_log","rp_sys_user" };
         String[] table_names = new String[] { "wx_banner"};
         
-        boolean isNeedController = true;
+        boolean isNeedController = false;
 
         for (String table_name : table_names) {
             Generator.doGenerator(author, dir, project_url, tablePrefix, table_name, isNeedController, true);
