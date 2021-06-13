@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.xdong.ripple.common.crawler.CrawlerSearchSongVo;
 import com.xdong.ripple.commonservice.annotation.Log;
 import com.xdong.ripple.crawler.common.CrawlerResultVo;
@@ -126,7 +126,7 @@ public class CrawlerController extends BaseController {
 	@RequestMapping("/list")
 	@ResponseBody
 	public RpCrawlerSongsDo getSongsList(Long id) {
-		return rpCrawlerSongsServiceImpl.getById(id);
+		return rpCrawlerSongsServiceImpl.selectById(id);
 	}
 
 	@Log("音乐首页")
@@ -138,12 +138,12 @@ public class CrawlerController extends BaseController {
 		page.setCurrent(pageNo);
 		page.setSize(pageSize);
 
-		QueryWrapper<RpCrawlerSongsDo> wrapper = new QueryWrapper<RpCrawlerSongsDo>();
+		EntityWrapper<RpCrawlerSongsDo> wrapper = new EntityWrapper<RpCrawlerSongsDo>();
 		if (StringUtils.isNotBlank(name)) {
-			wrapper.eq("name", name).orderBy(true, true, "name");
+			wrapper.eq("name", name).orderBy(true, "name", true);
 		}
 
-		Page<RpCrawlerSongsDo> result = rpCrawlerSongsServiceImpl.page(page, wrapper);
+		Page<RpCrawlerSongsDo> result = rpCrawlerSongsServiceImpl.selectPage(page, wrapper);
 
 		Map<String, List<RpCrawlerSongsDo>> modelMap = new HashMap<String, List<RpCrawlerSongsDo>>();
 		modelMap.put("songs", result.getRecords());
@@ -158,7 +158,7 @@ public class CrawlerController extends BaseController {
 	@RequestMapping(value = "/songData")
 	@ResponseBody
 	public Object songData(@RequestParam("songId") String songId) {
-		return rpCrawlerSongsServiceImpl.getById(Long.parseLong(songId));
+		return rpCrawlerSongsServiceImpl.selectById(Long.parseLong(songId));
 	}
 
 	@RequestMapping(value = "/indexold", method = { RequestMethod.GET, RequestMethod.POST })
@@ -172,7 +172,7 @@ public class CrawlerController extends BaseController {
 	@ResponseBody
 	public Object crawl(ParamVo paramVo) {
 		try {
-			RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+			RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(paramVo.getUrlKey());
 
 			if (CrawlerTypeEnum.INIT.getCode().equals(urlDo.getType())) {
 				return crawlerStrategyClient.specialCrawler(paramVo);
@@ -208,7 +208,7 @@ public class CrawlerController extends BaseController {
 			if (("temp_h".equals(var.getName()) && "iamaadmin".equals(var.getValue()))
 					|| "passwordiamaadmin".equals(password)) {
 
-				RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+				RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(paramVo.getUrlKey());
 
 				if (CrawlerTypeEnum.INIT.getCode().equals(urlDo.getType())) {
 					return crawlerStrategyClient.specialCrawler(paramVo);

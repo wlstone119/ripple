@@ -24,7 +24,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
 import com.xdong.ripple.commonservice.aspect.SecurityUtil;
 
 @Configuration

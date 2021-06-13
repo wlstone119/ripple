@@ -1,6 +1,6 @@
 package com.xdong.ripple.spi.idol;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ripple.mplus.support.service.IMPService;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDetailDo;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author wanglei
  * @since 2019-03-20
  */
-public interface IXdIdolHomeViewDetailService extends IService<XdIdolHomeViewDetailDo> {
+public interface IXdIdolHomeViewDetailService extends IMPService<XdIdolHomeViewDetailDo> {
 
 	public List<XdIdolHomeViewDetailDo> getHomeViewList(Long homeId);
 

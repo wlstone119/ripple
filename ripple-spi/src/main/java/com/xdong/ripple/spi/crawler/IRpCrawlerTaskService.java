@@ -1,6 +1,6 @@
 package com.xdong.ripple.spi.crawler;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ripple.mplus.support.service.IMPService;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerTaskDo;
 
 /**
@@ -11,6 +11,6 @@ import com.xdong.ripple.dal.entity.crawler.RpCrawlerTaskDo;
  * @author wanglei
  * @since 2019-05-19
  */
-public interface IRpCrawlerTaskService extends IService<RpCrawlerTaskDo> {
+public interface IRpCrawlerTaskService extends IMPService<RpCrawlerTaskDo> {
 
 }

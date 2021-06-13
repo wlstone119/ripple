@@ -1,6 +1,6 @@
 package com.xdong.ripple.service.system.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ripple.mplus.support.service.impl.MPServiceImpl;
 import com.xdong.ripple.dal.entity.system.RpSysUserFeedbackDo;
 import com.xdong.ripple.dal.mapper.system.RpSysUserFeedbackDoMapper;
 import com.xdong.ripple.spi.system.IRpSysUserFeedbackService;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 2019-05-02
  */
 @Service
-public class RpSysUserFeedbackServiceImpl extends ServiceImpl<RpSysUserFeedbackDoMapper, RpSysUserFeedbackDo>
+public class RpSysUserFeedbackServiceImpl extends MPServiceImpl<RpSysUserFeedbackDoMapper, RpSysUserFeedbackDo>
 		implements IRpSysUserFeedbackService {
 
 }

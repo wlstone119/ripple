@@ -198,7 +198,7 @@ public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 					albumPicUrl.indexOf("?") > 0 ? albumPicUrl.substring(0, albumPicUrl.indexOf("?")) : albumPicUrl);
 
 			try {
-				rpSongsServiceImpl.save(songDo);
+				rpSongsServiceImpl.insert(songDo);
 
 				logger.info(
 						"已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_WANGYI + "-" + songId);
@@ -287,7 +287,7 @@ public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 		RpCrawlerUrlDo rpUrlDo = rpCrawlerUrlServiceImpl.getCrawlerUrlRecord(name, urlDo.getModuleName());
 
 		if (rpUrlDo == null) {
-			rpCrawlerUrlServiceImpl.save(urlDo);
+			rpCrawlerUrlServiceImpl.insert(urlDo);
 			logger.info("初始化爬虫任务成功：[" + urlDo.getName() + "-" + urlDo.getModuleName() + "]");
 		} else {
 			rpUrlDo.setCrawlerUrl(urlDo.getCrawlerUrl());
@@ -300,7 +300,7 @@ public class WyCloudMusicCrawler extends AbstractMusicCrawler {
 
 	@Override
 	protected List<RpCrawlerUrlDo> getCrawlerUrlList(ParamVo paramVo) {
-		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(paramVo.getUrlKey());
 
 		if (CrawlerTypeEnum.SHOW.getCode().equals(urlDo.getType()) && StringUtils.isBlank(urlDo.getCrawlerUrl())) {
 			return rpCrawlerUrlServiceImpl.getCrawlerUrlList(CrawlerTypeEnum.MUSIC.getCode(),

@@ -42,7 +42,7 @@ public class UserFeedbackController extends BaseController {
 			return getErrResult(IErrorEnum.USER_FEED_FORMAT_ERROR);
 		}
 
-		rpSysUserFeedbackServiceImpl.save(feeback);
+		rpSysUserFeedbackServiceImpl.insert(feeback);
 
 		return getResult(true);
 	}

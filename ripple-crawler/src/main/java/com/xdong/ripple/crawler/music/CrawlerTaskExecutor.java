@@ -65,7 +65,7 @@ public class CrawlerTaskExecutor implements InitializingBean {
 	}
 
 	private void execute(Long taskId) {
-		RpCrawlerUrlDo taskDo = rpCrawlerUrlServiceImpl.getById(taskId);
+		RpCrawlerUrlDo taskDo = rpCrawlerUrlServiceImpl.selectById(taskId);
 
 		if (taskDo != null) {
 

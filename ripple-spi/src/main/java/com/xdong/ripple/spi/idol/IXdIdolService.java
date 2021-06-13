@@ -1,6 +1,6 @@
 package com.xdong.ripple.spi.idol;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ripple.mplus.support.service.IMPService;
 import com.xdong.ripple.dal.entity.idol.XdIdolDo;
 
 /**
@@ -11,6 +11,6 @@ import com.xdong.ripple.dal.entity.idol.XdIdolDo;
  * @author wanglei
  * @since 2019-03-20
  */
-public interface IXdIdolService extends IService<XdIdolDo> {
+public interface IXdIdolService extends IMPService<XdIdolDo> {
 
 }

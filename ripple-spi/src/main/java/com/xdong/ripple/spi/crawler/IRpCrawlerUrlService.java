@@ -2,7 +2,7 @@ package com.xdong.ripple.spi.crawler;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ripple.mplus.support.service.IMPService;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
 
 /**
@@ -13,7 +13,7 @@ import com.xdong.ripple.dal.entity.crawler.RpCrawlerUrlDo;
  * @author wanglei
  * @since 2019-03-20
  */
-public interface IRpCrawlerUrlService extends IService<RpCrawlerUrlDo> {
+public interface IRpCrawlerUrlService extends IMPService<RpCrawlerUrlDo> {
 
 	List<RpCrawlerUrlDo> getCrawlerUrlList(String type, String name);
 

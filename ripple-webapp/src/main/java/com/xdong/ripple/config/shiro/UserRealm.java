@@ -15,7 +15,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.xdong.ripple.common.utils.ShiroUtils;
 import com.xdong.ripple.common.utils.SpringUtil;
 import com.xdong.ripple.dal.entity.system.RpSysUserDo;
@@ -45,10 +45,10 @@ public class UserRealm extends AuthorizingRealm {
 		IRpSysUserService userService = SpringUtil.getBean(IRpSysUserService.class);
 
 		// 查询用户信息
-		QueryWrapper<RpSysUserDo> wrapper = new QueryWrapper<RpSysUserDo>();
+		EntityWrapper<RpSysUserDo> wrapper = new EntityWrapper<RpSysUserDo>();
 		wrapper.allEq(map);
 
-		RpSysUserDo user = userService.getOne(wrapper);
+		RpSysUserDo user = userService.selectOne(wrapper);
 
 		// 账号不存在
 		if (user == null) {

@@ -1,7 +1,7 @@
 package com.xdong.ripple.spi.system;
 
+import com.ripple.mplus.support.service.IMPService;
 import com.xdong.ripple.dal.entity.system.RpSysUserDo;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author wanglei
  * @since 2019-03-23
  */
-public interface IRpSysUserService extends IService<RpSysUserDo> {
+public interface IRpSysUserService extends IMPService<RpSysUserDo> {
 
 }

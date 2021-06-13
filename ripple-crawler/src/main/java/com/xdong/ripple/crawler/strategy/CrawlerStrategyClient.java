@@ -37,7 +37,7 @@ public class CrawlerStrategyClient {
 			throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
 		}
 
-		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(urlKey);
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(urlKey);
 		CrawlerMusicStrategyInterface strategy = (CrawlerMusicStrategyInterface) SpringUtil
 				.getBeansByName(urlDo.getCrawlerClass());
 
@@ -58,7 +58,7 @@ public class CrawlerStrategyClient {
 			throw BizException.create(String.format("param error: %s", JSON.toJSONString(paramVo)));
 		}
 
-		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(urlKey);
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(urlKey);
 
 		CrawlerMusicStrategyInterface strategy = (CrawlerMusicStrategyInterface) SpringUtil
 				.getBeansByName(urlDo.getCrawlerClass());

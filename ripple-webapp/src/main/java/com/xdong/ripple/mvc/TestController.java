@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDetailDo;
 import com.xdong.ripple.spi.idol.IXdIdolHomeViewDetailService;
 
@@ -40,9 +39,9 @@ public class TestController extends BaseController {
 	@ResponseBody
 	public Object testWrapper() {
 
-		QueryWrapper<XdIdolHomeViewDetailDo> wrapper = new QueryWrapper<XdIdolHomeViewDetailDo>();
-		wrapper.apply("site_type >= {0} or content<= {1}", "siteType", "content");
-		List<XdIdolHomeViewDetailDo> list = xdIdolHomeViewDetailServiceImpl.list(wrapper);
+		EntityWrapper<XdIdolHomeViewDetailDo> wrapper = new EntityWrapper<XdIdolHomeViewDetailDo>();
+		wrapper.addFilter("site_type >= {0} or content<= {1}", "siteType", "content");
+		List<XdIdolHomeViewDetailDo> list = xdIdolHomeViewDetailServiceImpl.selectList(wrapper);
 		return port;
 	}
 
@@ -50,8 +49,8 @@ public class TestController extends BaseController {
 	@ResponseBody
 	public Object testRollback(Integer isRuntime) throws IOException {
 
-		XdIdolHomeViewDetailDo viewDo1 = xdIdolHomeViewDetailServiceImpl.getById(1);
-		XdIdolHomeViewDetailDo viewDo2 = xdIdolHomeViewDetailServiceImpl.getById(2);
+		XdIdolHomeViewDetailDo viewDo1 = xdIdolHomeViewDetailServiceImpl.selectById(1);
+		XdIdolHomeViewDetailDo viewDo2 = xdIdolHomeViewDetailServiceImpl.selectById(2);
 
 		viewDo1.setContent("wanglei");
 		viewDo2.setContent("wanglei");

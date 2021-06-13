@@ -1,7 +1,8 @@
 package com.xdong.ripple.service.idol.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.ripple.mplus.support.service.impl.MPServiceImpl;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeDo;
 import com.xdong.ripple.dal.entity.idol.XdIdolHomeViewDetailDo;
 import com.xdong.ripple.dal.mapper.idol.XdIdolHomeViewDetailDoMapper;
@@ -28,7 +29,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * @since 2018-09-24
  */
 @Service
-public class XdIdolHomeViewDetailServiceImpl extends ServiceImpl<XdIdolHomeViewDetailDoMapper, XdIdolHomeViewDetailDo>
+public class XdIdolHomeViewDetailServiceImpl extends MPServiceImpl<XdIdolHomeViewDetailDoMapper, XdIdolHomeViewDetailDo>
 		implements IXdIdolHomeViewDetailService {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -38,10 +39,10 @@ public class XdIdolHomeViewDetailServiceImpl extends ServiceImpl<XdIdolHomeViewD
 
 	@Override
 	public List<XdIdolHomeViewDetailDo> getHomeViewList(Long homeId) {
-		QueryWrapper<XdIdolHomeViewDetailDo> entityWrapper = new QueryWrapper<XdIdolHomeViewDetailDo>();
+		Wrapper<XdIdolHomeViewDetailDo> entityWrapper = new EntityWrapper<XdIdolHomeViewDetailDo>();
 		entityWrapper.eq("pre_view_id", homeId);
 
-		return list(entityWrapper);
+		return selectList(entityWrapper);
 	}
 
 	@Override

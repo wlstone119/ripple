@@ -202,7 +202,7 @@ public class BaiduMusicCrawler extends AbstractMusicCrawler {
 						continue;
 					}
 
-					rpSongsServiceImpl.save(songDo);
+					rpSongsServiceImpl.insert(songDo);
 
 					logger.info("已收录歌曲：" + songDo.getName() + " 歌曲来源及主键：" + Constant.CRAWLER_RESOURCE_BAIDU + "-"
 							+ songDo.getSongId());

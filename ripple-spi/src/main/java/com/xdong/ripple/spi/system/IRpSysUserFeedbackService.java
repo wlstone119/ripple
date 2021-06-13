@@ -1,6 +1,6 @@
 package com.xdong.ripple.spi.system;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ripple.mplus.support.service.IMPService;
 import com.xdong.ripple.dal.entity.system.RpSysUserFeedbackDo;
 
 /**
@@ -11,6 +11,6 @@ import com.xdong.ripple.dal.entity.system.RpSysUserFeedbackDo;
  * @author wanglei
  * @since 2019-05-02
  */
-public interface IRpSysUserFeedbackService extends IService<RpSysUserFeedbackDo> {
+public interface IRpSysUserFeedbackService extends IMPService<RpSysUserFeedbackDo> {
 
 }

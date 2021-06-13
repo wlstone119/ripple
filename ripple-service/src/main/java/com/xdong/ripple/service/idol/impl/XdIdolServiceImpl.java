@@ -1,6 +1,6 @@
 package com.xdong.ripple.service.idol.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ripple.mplus.support.service.impl.MPServiceImpl;
 import com.xdong.ripple.dal.entity.idol.XdIdolDo;
 import com.xdong.ripple.dal.mapper.idol.XdIdolDoMapper;
 import com.xdong.ripple.spi.idol.IXdIdolService;
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2019-03-20
  */
 @Service
-public class XdIdolServiceImpl extends ServiceImpl<XdIdolDoMapper, XdIdolDo> implements IXdIdolService {
+public class XdIdolServiceImpl extends MPServiceImpl<XdIdolDoMapper, XdIdolDo> implements IXdIdolService {
 
 }

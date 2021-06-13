@@ -25,12 +25,12 @@ public class MainGenerator {
         //String[] table_names = new String[] { "rp_crawler_url", "rp_crawler_songs", "rp_crawler_songs_sheet" };
         //String[] table_names = new String[] { "xd_idol", "xd_idol_home", "xd_idol_home_view","xd_idol_home_view_detail" };
         //String[] table_names = new String[] { "rp_sys_dict","rp_sys_log","rp_sys_user" };
-        String[] table_names = new String[] { "rp_sys_user_feedback"};
+        String[] table_names = new String[] { "wx_banner"};
         
         boolean isNeedController = true;
 
         for (String table_name : table_names) {
-            //Generator.doGenerator(author, dir, project_url, tablePrefix, table_name, isNeedController);
+            Generator.doGenerator(author, dir, project_url, tablePrefix, table_name, isNeedController, true);
         }
 
     }

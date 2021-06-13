@@ -1,12 +1,13 @@
 package com.xdong.ripple.service.crawler.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.ripple.mplus.support.service.impl.MPServiceImpl;
 import com.xdong.ripple.common.crawler.CrawlerSearchSongVo;
 import com.xdong.ripple.dal.entity.crawler.RpCrawlerSongsDo;
 import com.xdong.ripple.dal.mapper.crawler.RpCrawlerSongsDoMapper;
 import com.xdong.ripple.spi.crawler.IRpCrawlerSongsService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Service;
  * @since 2019-03-20
  */
 @Service
-public class RpCrawlerSongsServiceImpl extends ServiceImpl<RpCrawlerSongsDoMapper, RpCrawlerSongsDo>
+public class RpCrawlerSongsServiceImpl extends MPServiceImpl<RpCrawlerSongsDoMapper, RpCrawlerSongsDo>
 		implements IRpCrawlerSongsService {
 
 	// 一行展示4个
@@ -42,11 +43,11 @@ public class RpCrawlerSongsServiceImpl extends ServiceImpl<RpCrawlerSongsDoMappe
 		page.setCurrent(pageNo);
 		page.setSize(pageSize);
 
-		QueryWrapper<RpCrawlerSongsDo> wrapper = new QueryWrapper<RpCrawlerSongsDo>();
+		Wrapper<RpCrawlerSongsDo> wrapper = new EntityWrapper<RpCrawlerSongsDo>();
 		wrapper.eq("resource", type);
-		wrapper.apply(" MATCH(name,song_author,song_album) AGAINST({0})", queryKey);
+		wrapper.addFilter(" MATCH(name,song_author,song_album) AGAINST({0})", queryKey);
 
-		Page<RpCrawlerSongsDo> resultPage = page(page, wrapper);
+		Page<RpCrawlerSongsDo> resultPage = selectPage(page, wrapper);
 
 		if (resultPage != null && CollectionUtils.isNotEmpty(resultPage.getRecords())) {
 			result.setCurrent(resultPage.getCurrent());
@@ -99,7 +100,7 @@ public class RpCrawlerSongsServiceImpl extends ServiceImpl<RpCrawlerSongsDoMappe
 	@Override
 	public boolean checkSongIdExists(Long songId, String resource) {
 
-		QueryWrapper<RpCrawlerSongsDo> wrapper = new QueryWrapper<RpCrawlerSongsDo>();
+		EntityWrapper<RpCrawlerSongsDo> wrapper = new EntityWrapper<RpCrawlerSongsDo>();
 
 		RpCrawlerSongsDo entity = new RpCrawlerSongsDo();
 
@@ -108,7 +109,7 @@ public class RpCrawlerSongsServiceImpl extends ServiceImpl<RpCrawlerSongsDoMappe
 
 		wrapper.setEntity(entity);
 
-		return list(wrapper).size() > 0;
+		return selectList(wrapper).size() > 0;
 	}
 
 }

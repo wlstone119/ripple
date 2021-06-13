@@ -81,7 +81,7 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 				paramList.add(taskParamVo);
 			}
 		} else {
-			RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+			RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(paramVo.getUrlKey());
 			paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
 			paramList.add(paramVo);
 		}
@@ -99,7 +99,7 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 
 		ParamVo paramVo = new ParamVo();
 
-		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.getById(taskId);
+		RpCrawlerUrlDo urlDo = rpCrawlerUrlServiceImpl.selectById(taskId);
 		paramVo.setBegin(0);
 		paramVo.setLimitPage(getLimit(urlDo.getCrawlerUrl()));
 		paramVo.setUrlKey(taskId);
@@ -114,7 +114,7 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 		taskDo.setcUser("system");
 		taskDo.setmTime(new Date());
 		taskDo.setmUser("system");
-		rpCrawlerTaskServiceImpl.save(taskDo);
+		rpCrawlerTaskServiceImpl.insert(taskDo);
 
 		CrawlerResultVo resultVo = mulitThreadExecute(paramVo);
 
@@ -163,7 +163,7 @@ public abstract class AbstractMusicCrawler implements CrawlerMusicStrategyInterf
 		int begin = paramVo.getBegin() <= 0 ? 0 : paramVo.getBegin();
 		int end = paramVo.getLimitPage() <= 0 ? 1 : paramVo.getLimitPage();
 
-		RpCrawlerUrlDo crawlerUrlDo = rpCrawlerUrlServiceImpl.getById(paramVo.getUrlKey());
+		RpCrawlerUrlDo crawlerUrlDo = rpCrawlerUrlServiceImpl.selectById(paramVo.getUrlKey());
 
 		ExecutorService service = null;
 
